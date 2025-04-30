@@ -1,0 +1,21 @@
+{
+	"name": "sample-game",
+	"version": "1.0.0-pre",
+	"description": "A game for Playdate",
+	"author": "author",
+	"scripts": {
+		"start": "pd dev",
+		"build": "pd",
+		"build:release": "NODE_ENV=production pd",
+		"simulate": "pd simulate",
+		"simulate:release": "NODE_ENV=production pd simulate"
+	},
+	"playdate": {
+		"pdxinfo": {
+			"name": "Sample Game"
+		}
+	},
+	"dependencies": {
+		"pddx": "^3.2.2"
+	}
+}
