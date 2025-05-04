@@ -17,15 +17,19 @@ function FallState:on_enter(previous_state)
     end
 end
 
-function FallState:update()
-    FallState.super.update(self)
+function FallState:update(delta_time)
+    FallState.super.update(self, delta_time)
     if self.coyote_time > 0 then
-        self.coyote_time -= 1
+        self.coyote_time -= delta_time
+        print(self.coyote_time)
     end
 end
 
 function FallState:after_move()
-    FallState.super.after_move(self)
+    if FallState.super.after_move(self) then
+        return
+    end
+    
     if self.coyote_time <= 0 and self.player.times_jumped < 1 then
         self.player.times_jumped = 1
     end

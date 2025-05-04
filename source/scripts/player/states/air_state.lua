@@ -11,10 +11,10 @@ function AirState:on_enter()
     self.last_flip = self.player.globalFlip
 end
 
-function AirState:update()
-    AirState.super.update()
+function AirState:update(delta_time)
+    AirState.super.update(self, delta_time)
 
-    if self.player.input_handler.dash_pressed then
+    if self.player.input_handler.dash and self.player.dash_unlocked and self.player.dash_available then
         self.sm:dash()
         return
     end
@@ -25,6 +25,7 @@ function AirState:update()
         x_acceleration *= 4
     end
 
+    
     if self.player.input_handler.x_v > 0 then
         self.player.x_velocity += x_acceleration
         if self.player.x_velocity > self.player.max_speed then
@@ -61,7 +62,7 @@ end
 function AirState:after_move()
     if self.player.touching_ground then
         self.sm:land()
-        return
+        return true
     end
 
     if self.player.touching_wall then

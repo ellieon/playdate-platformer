@@ -1,8 +1,8 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
+local delta_time <const> = 1.0 / playdate.display.getRefreshRate() -- Change this to something more dynamic
 
 class("Player").extends(AnimatedSprite)
-
 
 function Player:init(x, y, gameScene)
     self.gameScene = gameScene
@@ -10,28 +10,36 @@ function Player:init(x, y, gameScene)
     local playerImageTable = gfx.imagetable.new("images/player-table-32-32")
     Player.super.init(self, playerImageTable)
 
+    -- Player attributes
+
+    self.x_acceleration = 0.5 * 30
+    self.max_speed = 4.0 * 30
+    self.x_turn_acceleration = 1.5 * 30
+    self.x_run_deceleration = 0.5 * 30
+
+    self.jump_velocity = -14 * 30
+    self.initial_jump_velocity = -11 * 30
+    self.jump_acceleration = -3 * 30
+
+    self.gravity = 1.5 * 30
+    self.air_x_friction = 0.2 * 30
+    self.minimum_air_speed = 0.5 * 30
+    self.terminal_velocity = 100 * 30
+    self.coyote_time =  7 * delta_time -- 7 frames of coyote time
+
+    self.dash_frames = 7
+    self.dash_minumum_speed = 5 * 30
+    self.dash_speed = 17 *  30
+    self.dash_deceleration = 5 * 30
+
+    self.max_jumps = 2
+    self.dash_unlocked = true
+    -- Player state
+
     self.x_velocity = 0
     self.y_velocity = 0
-    self.gravity = 1.5
-    self.max_speed = 4.0
-    self.jump_velocity = -14
-    self.initial_jump_velocity = -11
-    self.jump_acceleration = -3
-    self.coyote_time = 3
-    self.air_x_friction = 0.2
-    self.minimum_air_speed = 0.5
-    self.terminal_velocity = 100
-    self.currentState = 'idle'
-    self.x_acceleration = 0.5
-    self.x_turn_acceleration = 1.5
-    self.x_run_deceleration = 0.5
-
     self.times_jumped = 0
-    self.max_jumps = 1
-    self.dash_unlocked = false
-    self.dashSpeed = 12
-    self.dashMinimumSpeed = 3
-    self.dashDrag = 0.8
+    self.dash_available = true;
 
     self.touching_ground = false
     self.touching_ceiling = false
@@ -43,6 +51,7 @@ function Player:init(x, y, gameScene)
     self:addState("jump", 4, 4)
     self:addState("fall", 4, 4)
     self:addState("dash", 4, 4)
+    self.currentState = 'idle'
     self:playAnimation()
 
     self:moveTo(x,y)
@@ -62,12 +71,12 @@ function Player:init(x, y, gameScene)
 
     self.sm:add_transition('idle', '*', 'idle')
     self.sm:add_transition('run', {'idle'}, 'run')
-    self.sm:add_transition('jump', {'idle', 'run'}, 'jump')
-    self.sm:add_transition('double_jump', {'fall', 'jump', 'dash'}, 'jump')
-    self.sm:add_transition('dash', {'idle', 'run', 'jump'}, 'dash')
+    self.sm:add_transition('jump', {'dash', 'idle', 'run'}, 'jump')
+    self.sm:add_transition('double_jump', {'fall', 'jump'}, 'jump')
+    self.sm:add_transition('dash', {'idle', 'run', 'jump', 'fall'}, 'dash')
     self.sm:add_transition('air_dash_end', {'dash'}, 'jump')
     self.sm:add_transition('land', {'fall'}, 'run')
-    self.sm:add_transition('fall', {'run', 'jump', 'dash'}, 'fall')
+    self.sm:add_transition('fall', {'idle', 'run', 'jump', 'dash'}, 'fall')
 
     self.input_handler = PlayerInputHandler(self)
 end
@@ -79,24 +88,21 @@ function Player:update()
     -- end
     
     self.input_handler:update()
-    self.sm:update()
-
+    self.sm:update(delta_time)
     self:handleMovementAndCollisions()
-
     self.sm:after_move()
-
     self.currentState = self.sm.active_state
     self:updateAnimation()
-
-    
 end
 
 
 function Player:handleMovementAndCollisions()
-    
     self:apply_gravity()
 
-    local _, _, collisions, length = self:moveWithCollisions(self.x + self.x_velocity, self.y + self.y_velocity) 
+    local target_x = self.x + (self.x_velocity * delta_time)
+    local target_y = self.y + (self.y_velocity * delta_time)
+
+    local _, _, collisions, length = self:moveWithCollisions(target_x, target_y) 
  
     self.touching_ground = false
     self.touching_ceiling = false
@@ -114,8 +120,6 @@ function Player:handleMovementAndCollisions()
  
              if collision.normal.y == -1 then
                  self.touching_ground = true
-                 self.doubleJumpAvailable = true
-                 self.dashAvailable = true
              elseif collision.normal.y == 1 then
                  self.touching_ceiling = true
              end
@@ -171,7 +175,6 @@ function Player:handleMovementAndCollisions()
     end
 end
 
-
 function Player:collisionResponse(other)
     local tag = other.getTag
     if tag == TAGS.Hazard or tag == TAGS.Pickup then
@@ -179,72 +182,3 @@ function Player:collisionResponse(other)
     end
     return gfx.sprite.kCollisionTypeSlide
 end
-
-
-
-
--- function Player:handleGroundInput()
--- if pd.buttonJustPressed(pd.kButtonB) and self.dashAvailable and self.dash_unlocked then
---         self:changeToDashState()
---         self.sm:dash()
---     end
--- end
-
--- function Player:handleAirInput()
---     if self:playerJumped() and self.double_jump and self.doubleJumpAvailable then
---         self.doubleJumpAvailable = false
---         self:changeToJumpState()
---     elseif pd.buttonJustPressed(pd.kButtonB) and self.dashAvailable and self.dash_unlocked then
---         self:changeToDashState()
--- end
-
-
-
--- function Player:die()
---     self.x_velocity = 0
---     self.y_velocity = 0
---     self.dead = true
---     self:setCollisionsEnabled(false)
---     pd.timer.performAfterDelay(200, function()
---         self:setCollisionsEnabled(true)
---         self.dead = false
---         self.gameScene:resetPlayer()
---     end)
--- end
-
--- function Player:changeToDashState()
---     self.dashAvailable = false
---     self.y_velocity = .2
-
---     if pd.buttonIsPressed(pd.kButtonLeft) then
---         self.x_velocity = -self.dashSpeed
---     elseif pd.buttonIsPressed(pd.kButtonRight) then
---         self.x_velocity = self.dashSpeed
---     else
---         if self.globalFlip == 1 then
---             self.x_velocity = -self.dashSpeed
---         else
---             self.x_velocity = self.dashSpeed
---         end
---     end
---     self:changeState("dash")
--- end
-
-
--- function Player:handleState()
---     if self.currentState == "jump" then
---         if self.touching_ground then
---             self:changeToIdleState()
---         end
---         self:applyGravity()
---         self:applyDrag(self.drag)
---         self:handleAirInput()
---     elseif self.currentState == "dash" then
---         self:applyGravity(0.3)
---         self:applyDrag(self.dashDrag)
---         if math.abs(self.x_velocity) <= self.dashMinimumSpeed or self.touching_wall then
---             self:changeToFallState()
---         end
---     end
--- end
-

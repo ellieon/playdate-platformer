@@ -6,6 +6,7 @@ function PlayerInputHandler:init(player)
     self.x_v = 0
     self.y_v = 0
     self.jump_held = false
+    self.dash = false
     self.jump_buffer = 0
     self.player = player
 
@@ -37,12 +38,17 @@ function PlayerInputHandler:update()
     if pd.buttonJustPressed(pd.kButtonA) then
         self.jump_buffer = 10
     end
+
+    if pd.buttonJustPressed(pd.kButtonB) then
+        self.dash = true
+    else 
+        self.dash = false
+    end
     
 end
 function PlayerInputHandler:reset_jump_buffer()
     self.jump_buffer = 0
 end
-
 
 function PlayerInputHandler:jump_pressed()
     --return self.jump_buffer > 0

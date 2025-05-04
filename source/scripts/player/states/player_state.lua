@@ -5,5 +5,6 @@ function PlayerState:init(player)
     self.player = player
 end
 
-function PlayerState:update()
+function PlayerState:update(delta_time)
+    PlayerState.super.update(self, delta_time)
 end

@@ -11,9 +11,11 @@ function RunState:on_enter()
     self.last_flip = self.player.globalFlip
 end
 
-function RunState:update()
+function RunState:update(delta_time)
     
-    RunState.super.update(self)
+    if RunState.super.update(self, delta_time) then
+        return
+    end
 
     local x_acceleration = self.player.x_acceleration
 

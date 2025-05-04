@@ -77,9 +77,9 @@ function StateMachine:subscribe(name, event_type, callback)
   self[eventName] = callback
 end
 
-function StateMachine:update() 
+function StateMachine:update(delta_time) 
   if self:get_current_state() then
-    self:get_current_state():update()
+    self:get_current_state():update(delta_time)
   end
 end
 

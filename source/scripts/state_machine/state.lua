@@ -6,7 +6,7 @@ function State:on_enter() end
 
 function State:on_exit() end
 
-function State:update() end
+function State:update(delta_time) end
 
 function State:after_move() end
 

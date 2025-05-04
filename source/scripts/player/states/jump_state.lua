@@ -12,8 +12,10 @@ function JumpState:on_enter()
     self.player.input_handler:reset_jump_buffer()
 end
 
-function JumpState:update()
-    JumpState.super.update(self)
+function JumpState:update(delta_time)
+    if JumpState.super.update(self, delta_time) then
+        return
+    end
 
     if not self.player.input_handler.jump_held then
         self.sm:fall()
