@@ -30,3 +30,5 @@ pdxinfo
 # Compiled Playdate games
 *.pdx
 *.pdx.zip
+
+source/levels/world/backups
