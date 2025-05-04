@@ -31,7 +31,7 @@ function Ability:pickUp(player)
     if self.abilityName == "DoubleJump" then
         player.max_jumps = 2
     elseif self.abilityName == "Dash" then
-        player.dashAbility = true
+        player.dash_unlocked = true
     end
     self.fields.pickedUp = true
     self:remove()

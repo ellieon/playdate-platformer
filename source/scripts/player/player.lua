@@ -12,28 +12,26 @@ function Player:init(x, y, gameScene)
 
     -- Player attributes
 
-    self.x_acceleration = 0.5 * 30
-    self.max_speed = 4.0 * 30
-    self.x_turn_acceleration = 1.5 * 30
-    self.x_run_deceleration = 0.5 * 30
+    self.x_acceleration = 15
+    self.max_speed = 120
+    self.x_turn_acceleration = 45
+    self.x_run_deceleration = 15
 
-    self.jump_velocity = -14 * 30
-    self.initial_jump_velocity = -11 * 30
-    self.jump_acceleration = -3 * 30
+    self.jump_velocity = -420
+    self.initial_jump_velocity = -330
+    self.jump_acceleration = -90
 
-    self.gravity = 1.5 * 30
-    self.air_x_friction = 0.2 * 30
-    self.minimum_air_speed = 0.5 * 30
-    self.terminal_velocity = 100 * 30
+    self.gravity = 45
+    self.air_x_friction = 3
+    self.minimum_air_speed = 15
+    self.terminal_velocity = 500
     self.coyote_time =  7 * delta_time -- 7 frames of coyote time
 
-    self.dash_frames = 7
-    self.dash_minumum_speed = 5 * 30
-    self.dash_speed = 17 *  30
-    self.dash_deceleration = 5 * 30
+    self.dash_frames = 5 * delta_time
+    self.dash_speed = 300
 
-    self.max_jumps = 2
-    self.dash_unlocked = true
+    self.max_jumps = 0
+    self.dash_unlocked = false
     -- Player state
 
     self.x_velocity = 0
@@ -45,6 +43,7 @@ function Player:init(x, y, gameScene)
     self.touching_ceiling = false
     self.touching_wall = false
     self.dead = false
+    self.disable_gravity = false
 
     self:addState("idle", 1, 1)
     self:addState("run", 1, 3, {tickStep = 4})
@@ -158,6 +157,10 @@ function Player:handleMovementAndCollisions()
  end
 
  function Player:apply_gravity()
+    if self.disable_gravity then
+        return
+    end
+
     if self.touching_ceiling then
         self.y_velocity = 0
         return

@@ -17,6 +17,4 @@ function IdleState:update(delta_time)
     else
         self.player.x_velocity = 0
     end
-
-
 end

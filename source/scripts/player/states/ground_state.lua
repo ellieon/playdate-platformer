@@ -1,10 +1,9 @@
 class("GroundState").extends(PlayerState)
 
 function GroundState:on_enter()
+    GroundState.super.on_enter(self)
     self.player.times_jumped = 0
     self.player.dash_available = true
-    GroundState.super.on_enter(self)
-
 end
 
 function GroundState:update(delta_time)

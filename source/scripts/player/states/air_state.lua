@@ -25,16 +25,11 @@ function AirState:update(delta_time)
         x_acceleration *= 4
     end
 
-    
-    if self.player.input_handler.x_v > 0 then
-        self.player.x_velocity += x_acceleration
-        if self.player.x_velocity > self.player.max_speed then
-            self.player.x_velocity = self.player.max_speed
-        end
-    elseif self.player.input_handler.x_v < 0 then
-        self.player.x_velocity -= x_acceleration
-        if math.abs(self.player.x_velocity) > self.player.max_speed then
-            self.player.x_velocity = -(self.player.max_speed)
+    if math.abs(self.player.x_velocity) <= self.player.max_speed then
+        if self.player.input_handler.x_v > 0 then
+            self.player.x_velocity += x_acceleration
+        elseif self.player.input_handler.x_v < 0 then
+            self.player.x_velocity -= x_acceleration
         end
     end
 
@@ -43,12 +38,15 @@ function AirState:update(delta_time)
         return
     end
 
+
+    -- Add drag to slow down player
     if self.player.x_velocity > 0 then
         self.player.x_velocity -= self.player.air_x_friction
     elseif self.player.x_velocity < 0 then
         self.player.x_velocity += self.player.air_x_friction
     end
 
+    -- if drag has taken player below minimum speed, clamp them to minimum
     if self.player.x_velocity ~= 0 and (math.abs(self.player.x_velocity) < self.player.minimum_air_speed) then
         if self.player.x_velocity < 0 then
             self.player.x_velocity += self.player.air_x_friction

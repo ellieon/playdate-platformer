@@ -9,6 +9,12 @@ end
 function RunState:on_enter()
     RunState.super.on_enter(self)
     self.last_flip = self.player.globalFlip
+    
+    if math.abs(self.player.x_acceleration) > self.player.max_speed then
+        if self.player.x_acceleration > 0 then self.player.x_acceleration = self.player.max_speed
+        else  self.player.x_acceleration = -self.player.max_speed
+        end
+    end
 end
 
 function RunState:update(delta_time)
@@ -23,12 +29,12 @@ function RunState:update(delta_time)
         x_acceleration = self.player.x_turn_acceleration
     end
 
-    if self.player.input_handler.x_v > 0 then
+    if self.player.input_handler.x_v > 0 and math.abs(self.player.x_velocity) < self.player.max_speed then -- We want to maintain dash momentum
         self.player.x_velocity += x_acceleration
         if self.player.x_velocity > self.player.max_speed then
             self.player.x_velocity = self.player.max_speed
         end
-    elseif self.player.input_handler.x_v < 0 then
+    elseif self.player.input_handler.x_v < 0 and math.abs(self.player.x_velocity) < self.player.max_speed then -- We want to maintain dash momentum
         self.player.x_velocity -= x_acceleration
         if math.abs(self.player.x_velocity) > self.player.max_speed then
             self.player.x_velocity = -(self.player.max_speed)

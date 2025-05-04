@@ -28,15 +28,15 @@ end
 
 function GameScene:update()
     gfx.setFont(font)
-    gfx.setColor(gfx.kColorBlack)
-    gfx.fillRect(0, 0,150, 74)
-    gfx.setColor(gfx.kColorWhite)
-    gfx.drawText(self.player.currentState, 0, 0, 100, 11)
-    gfx.drawText('X Vel: '..self.player.x_velocity, 0, 13, 100, 11)
-    gfx.drawText('Y Vel: '..self.player.y_velocity, 0, 26, 100, 11)
-    gfx.drawText('Touching Ground '..tostring(self.player.touching_ground), 0, 39, 150, 11)
-    gfx.drawText('Touching Ceiling '..tostring(self.player.touching_ceiling), 0, 52, 150, 11)
-    gfx.drawText('Jumps: '..self.player.times_jumped..'/'..self.player.max_jumps, 0, 63, 100, 11)
+    -- gfx.setColor(gfx.kColorBlack)
+    -- gfx.fillRect(0, 0,150, 74)
+    -- gfx.setColor(gfx.kColorWhite)
+    -- gfx.drawText(self.player.currentState, 0, 0, 100, 11)
+    -- gfx.drawText('X Vel: '..self.player.x_velocity, 0, 13, 100, 11)
+    -- gfx.drawText('Y Vel: '..self.player.y_velocity, 0, 26, 100, 11)
+    -- gfx.drawText('Touching Ground '..tostring(self.player.touching_ground), 0, 39, 150, 11)
+    -- gfx.drawText('Touching Ceiling '..tostring(self.player.touching_ceiling), 0, 52, 150, 11)
+    -- gfx.drawText('Dash Available: '..tostring(self.player.dash_available and self.player.dash_unlocked), 0, 63, 150, 11)
 
 end
 

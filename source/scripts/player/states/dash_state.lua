@@ -2,13 +2,16 @@ class("DashState").extends(PlayerState)
 
 function DashState:on_enter(previous_state)
     DashState.super.on_enter(previous_state)
-   
+
+    self.player.dash_available = false
     self.dash_timer = self.player.dash_frames
+    self.player.disable_gravity = true
+    self.player.y_velocity = 0
 
     if self.player.input_handler.x_v < 0 then
-        self.player.x_velocity -=self.player.dash_speed
+        self.player.x_velocity = -self.player.dash_speed
     elseif self.player.input_handler.x_v > 0 then
-        self.player.x_velocity += self.player.dash_speed
+        self.player.x_velocity = self.player.dash_speed
     else
         if self.player.globalFlip == 1 then
             self.player.x_velocity = -self.player.dash_speed
@@ -18,6 +21,10 @@ function DashState:on_enter(previous_state)
     end
 end
 
+function DashState:on_exit()
+    self.player.disable_gravity = false
+end
+
 function DashState:update(delta_time)
     DashState.super.update(self, delta_time)
 
@@ -25,18 +32,10 @@ function DashState:update(delta_time)
         self.sm:jump()
         return
     end
+    
+    self.dash_timer -= delta_time
 
-    if self.dash_timer > 0 then
-        self.dash_timer -=1
-        return
-    end
-    if self.player.x_velocity > 0 then
-        self.player.x_velocity -= self.player.dash_deceleration
-    elseif self.player.x_velocity < 0 then
-        self.player.x_velocity += self.player.dash_deceleration
-    end
-
-    if math.abs(self.player.x_velocity) <= self.player.dash_minumum_speed then
+    if self.dash_timer < 0 then
         self.sm:fall()
         return
     end

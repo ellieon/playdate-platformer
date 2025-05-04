@@ -34,11 +34,10 @@ end
 
 function JumpState:after_move()
     JumpState.super.after_move(self)
-    if self.player.y_velocity > 0 then
+    if self.player.y_velocity > 0 or self.player.touching_ceiling then
         self.sm:fall()
         return
     end
-
 end
 
 
