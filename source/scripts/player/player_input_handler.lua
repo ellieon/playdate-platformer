@@ -5,6 +5,7 @@ local pd <const> = playdate
 function PlayerInputHandler:init(player)
     self.x_v = 0
     self.y_v = 0
+    self.jump_held = false
     self.jump_buffer = 0
     self.player = player
 
@@ -21,6 +22,12 @@ function PlayerInputHandler:update()
         self.x_v = -1
     end
 
+    if(pd.buttonIsPressed(pd.kButtonA)) then
+        self.jump_held = true
+    else
+        self.jump_held = false
+    end
+
     self.jump_buffer -= 1
 
     if self.jump_buffer <= 0 then
@@ -28,16 +35,16 @@ function PlayerInputHandler:update()
     end
     
     if pd.buttonJustPressed(pd.kButtonA) then
-        self.jump_buffer = 5
+        self.jump_buffer = 10
     end
     
 end
 function PlayerInputHandler:reset_jump_buffer()
-    print('reset_jump_buffer')
     self.jump_buffer = 0
 end
 
 
 function PlayerInputHandler:jump_pressed()
-    return self.jump_buffer > 0
+    --return self.jump_buffer > 0
+    return pd.buttonJustPressed(pd.kButtonA)
 end

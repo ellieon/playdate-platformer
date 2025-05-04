@@ -25,8 +25,11 @@ function Ability:init(x, y, entity)
 end
 
 function Ability:pickUp(player)
+    if self.abilityName == "Jump" then
+        player.max_jumps = 1
+    end
     if self.abilityName == "DoubleJump" then
-        player.doubleJumpAbility = true
+        player.max_jumps = 2
     elseif self.abilityName == "Dash" then
         player.dashAbility = true
     end

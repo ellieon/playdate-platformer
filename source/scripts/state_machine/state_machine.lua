@@ -61,8 +61,6 @@ function StateMachine:add_transition(name, from_states, to_state)
       print('Current state '..self.active_state.. ' not a valid state for event ' ..name)
     end  
   end
-
-
   self[name] = transition_callback
 end
 
@@ -82,6 +80,12 @@ end
 function StateMachine:update() 
   if self:get_current_state() then
     self:get_current_state():update()
+  end
+end
+
+function StateMachine:after_move()
+  if self:get_current_state() then
+    self:get_current_state():after_move()
   end
 end
 
