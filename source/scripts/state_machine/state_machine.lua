@@ -9,6 +9,7 @@ function StateMachine:init()
   self.states = {}
   self.active_state = ''
   self.transition_table = {}
+  self.from_state = nil
   
 end
 
@@ -51,12 +52,11 @@ function StateMachine:add_transition(name, from_states, to_state)
       current_state:on_exit()
       self:alert_subscriber(self.active_state, EVENT_TYPE.STATE_EXIT,
         {from_state = current_state, to_state = self:get_state(to_state), self})
-        
+
       self.active_state = to_state
-      self:get_current_state():on_enter()
+      self:get_current_state():on_enter(current_state)
       self:alert_subscriber(self.active_state, EVENT_TYPE.STATE_ENTER,
         {from_state = current_state, to_state = self:get_state(to_state), self})
-      --self:get_current_state():update()
     else
       print('Current state '..self.active_state.. ' not a valid state for event ' ..name)
     end  

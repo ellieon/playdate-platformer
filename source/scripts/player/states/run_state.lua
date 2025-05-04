@@ -45,5 +45,5 @@ function RunState:update()
 end
 
 function RunState:after_move()
-
+    RunState.super.after_move(self)
 end

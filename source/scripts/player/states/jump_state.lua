@@ -1,7 +1,6 @@
 class("JumpState").extends(AirState)
 
 function JumpState:on_enter()
-    self.apex_hit = false
     self.player.times_jumped += 1
 
     self.player.y_velocity = self.player.initial_jump_velocity
@@ -17,14 +16,16 @@ function JumpState:update()
     JumpState.super.update(self)
 
     if not self.player.input_handler.jump_held then
-        self.apex_hit = true
+        self.sm:fall()
+        return
     end
 
     if self.player.input_handler.jump_held and not self.apex_hit then
         self.player.y_velocity += self.player.jump_acceleration
         if self.player.y_velocity < self.player.jump_velocity then
             self.player.y_velocity = self.player.jump_velocity
-            self.apex_hit = true
+            self.sm:fall()
+            return
         end
     end
 end
@@ -32,7 +33,8 @@ end
 function JumpState:after_move()
     JumpState.super.after_move(self)
     if self.player.y_velocity > 0 then
-        self.apex_hit = true
+        self.sm:fall()
+        return
     end
 
 end

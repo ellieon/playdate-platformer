@@ -12,3 +12,11 @@ function GroundState:update()
         self.sm:jump()
     end
 end
+
+function GroundState:after_move()
+    GroundState.super.after_move(self)
+    if not self.player.touching_ground then
+        self.sm:fall()
+    end
+    
+end

@@ -17,6 +17,7 @@ function Player:init(x, y, gameScene)
     self.jump_velocity = -14
     self.initial_jump_velocity = -11
     self.jump_acceleration = -3
+    self.coyote_time = 3
     self.air_x_friction = 0.2
     self.minimum_air_speed = 0.5
     self.terminal_velocity = 100
@@ -26,7 +27,7 @@ function Player:init(x, y, gameScene)
     self.x_run_deceleration = 0.5
 
     self.times_jumped = 0
-    self.max_jumps = 0
+    self.max_jumps = 1
     self.dash_unlocked = false
     self.dashSpeed = 12
     self.dashMinimumSpeed = 3
@@ -40,6 +41,7 @@ function Player:init(x, y, gameScene)
     self:addState("idle", 1, 1)
     self:addState("run", 1, 3, {tickStep = 4})
     self:addState("jump", 4, 4)
+    self:addState("fall", 4, 4)
     self:addState("dash", 4, 4)
     self:playAnimation()
 
@@ -54,17 +56,18 @@ function Player:init(x, y, gameScene)
     self.sm:add_state(RunState(self), 'run')
     self.sm:add_state(JumpState(self), 'jump')
     self.sm:add_state(DashState(self), 'dash')
+    self.sm:add_state(FallState(self), 'fall')
 
     self.sm:set_initial_state('jump')
 
     self.sm:add_transition('idle', '*', 'idle')
     self.sm:add_transition('run', {'idle'}, 'run')
     self.sm:add_transition('jump', {'idle', 'run'}, 'jump')
-    self.sm:add_transition('double_jump', {'jump', 'dash'}, 'jump')
+    self.sm:add_transition('double_jump', {'fall', 'jump', 'dash'}, 'jump')
     self.sm:add_transition('dash', {'idle', 'run', 'jump'}, 'dash')
     self.sm:add_transition('air_dash_end', {'dash'}, 'jump')
-    self.sm:add_transition('land', {'jump', 'dash'}, 'run')
-    self.sm:add_transition('fall', {'jump', 'dash'})
+    self.sm:add_transition('land', {'fall'}, 'run')
+    self.sm:add_transition('fall', {'run', 'jump', 'dash'}, 'fall')
 
     self.input_handler = PlayerInputHandler(self)
 end
