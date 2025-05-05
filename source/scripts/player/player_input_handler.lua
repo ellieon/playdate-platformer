@@ -1,6 +1,7 @@
 class("PlayerInputHandler").extends()
 
 local pd <const> = playdate
+local delta_time <const> = 1 / playdate.display.getRefreshRate()
 
 function PlayerInputHandler:init(player)
     self.x_v = 0
@@ -29,14 +30,14 @@ function PlayerInputHandler:update()
         self.jump_held = false
     end
 
-    self.jump_buffer -= 1
+    self.jump_buffer -= delta_time
 
     if self.jump_buffer <= 0 then
         self.jump_buffer = 0
     end
     
     if pd.buttonJustPressed(pd.kButtonA) then
-        self.jump_buffer = 10
+        self.jump_buffer = 3 * delta_time --3 Frame jump buffer
     end
 
     if pd.buttonJustPressed(pd.kButtonB) then
@@ -51,6 +52,5 @@ function PlayerInputHandler:reset_jump_buffer()
 end
 
 function PlayerInputHandler:jump_pressed()
-    --return self.jump_buffer > 0
-    return pd.buttonJustPressed(pd.kButtonA)
+    return self.jump_buffer > 0
 end
