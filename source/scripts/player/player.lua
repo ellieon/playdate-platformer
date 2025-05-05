@@ -4,8 +4,8 @@ local delta_time <const> = 1.0 / playdate.display.getRefreshRate() -- Change thi
 
 class("Player").extends(AnimatedSprite)
 
-function Player:init(x, y, gameScene)
-    self.gameScene = gameScene
+function Player:init(x, y, game_manager)
+    self.game_manager = game_manager
 
     local playerImageTable = gfx.imagetable.new("images/player-table-32-32")
     Player.super.init(self, playerImageTable)
@@ -50,6 +50,7 @@ function Player:init(x, y, gameScene)
     self:addState("jump", 4, 4)
     self:addState("fall", 4, 4)
     self:addState("dash", 4, 4)
+    self:addState("freeze", 4, 4)
     self.currentState = 'idle'
     self:playAnimation()
 
@@ -65,6 +66,7 @@ function Player:init(x, y, gameScene)
     self.sm:add_state(JumpState(self), 'jump')
     self.sm:add_state(DashState(self), 'dash')
     self.sm:add_state(FallState(self), 'fall')
+    self.sm:add_state(FreezeState(self), 'freeze')
 
     self.sm:set_initial_state('jump')
 
@@ -76,15 +78,14 @@ function Player:init(x, y, gameScene)
     self.sm:add_transition('air_dash_end', {'dash'}, 'jump')
     self.sm:add_transition('land', {'fall'}, 'run')
     self.sm:add_transition('fall', {'idle', 'run', 'jump', 'dash'}, 'fall')
+    self.sm:add_transition('freeze', '*', 'freeze')
+    self.sm:add_transition('unfreeze', {'freeze'}, 'fall')
 
     self.input_handler = PlayerInputHandler(self)
 end
 
 function Player:update()
     Player.super.update(self)
-    -- if self.dead then
-    --     return
-    -- end
     
     self.input_handler:update()
     self.sm:update(delta_time)
@@ -142,17 +143,21 @@ function Player:handleMovementAndCollisions()
      end
  
      if self.x < 0 then
-         self.gameScene:enterRoom("west")
+         self.game_manager:enterRoom("west")
      elseif self.x > 400 then
-         self.gameScene:enterRoom("east")
+         self.game_manager:enterRoom("east")
      elseif self.y < 0 then
-         self.gameScene:enterRoom("north")
+         self.game_manager:enterRoom("north")
      elseif self.y > 240 then
-         self.gameScene:enterRoom("south")
+         self.game_manager:enterRoom("south")
      end
  
      if died then
-         --self:die()
+         self:freeze()
+         pd.timer.performAfterDelay(200, function()
+            self:setCollisionsEnabled(true)
+            self.game_manager:resetPlayer()
+        end)
      end
  end
 
@@ -184,4 +189,12 @@ function Player:collisionResponse(other)
         return gfx.sprite.kCollisionTypeOverlap
     end
     return gfx.sprite.kCollisionTypeSlide
+end
+
+function Player:freeze()
+    self.sm:freeze()
+end
+
+function Player:unfreeze()
+    self.sm:unfreeze()
 end

@@ -7,17 +7,21 @@ import "CoreLibs/timer"
 -- External libraries
 import "scripts/libraries/AnimatedSprite"
 import "scripts/libraries/LDtk"
+import "scripts/libraries/timeline"
 
 -- Game files
 import "scripts/game_scene"
 
 import "util/math"
+import "util/event_handler"
 
 import "scripts/actor"
 import "scripts/spike"
 import "scripts/spikeball"
 import "scripts/ability"
 
+    --Ui
+    import "scripts/ui/item_pickup_dialog.lua"
 
     -- State machine
     import "scripts/state_machine/state"
@@ -35,3 +39,4 @@ import "scripts/ability"
         import "scripts/player/states/idle_state"
         import "scripts/player/states/jump_state"
         import "scripts/player/states/dash_state"
+        import "scripts/player/states/freeze_state"

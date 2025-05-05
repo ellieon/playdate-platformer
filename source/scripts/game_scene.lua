@@ -11,6 +11,7 @@ Z_INDEXES = {
     Player = 100,
     Hazard = 200,
     Pickup = 50,
+    UI = 9999
 }
 
 local usePrecompiledLevels = not playdate.simulator
@@ -19,15 +20,23 @@ ldtk.load("levels/world.ldtk", usePrecompiledLevels)
 
 class("GameScene").extends()
 local font = gfx.font.new('fonts/font-pixieval')
+
 function GameScene:init()
+    self.event_handler = EventHandler()
+    self.event_handler:subscribe('ability_picked_up', self, self.player_ability_pickup)
+
     self:goToLevel("Level_0")
-    self.spawnX = 12 * 16
-    self.spawnY = 160
-    self.player = Player(self.spawnX, self.spawnY, self)
+    self.spawn_x = 12 * 16
+    self.spawn_y = 160
+    self.player = Player(self.spawn_x, self.spawn_y, self)
+
+
+    
 end
 
 function GameScene:update()
     gfx.setFont(font)
+    
     -- gfx.setColor(gfx.kColorBlack)
     -- gfx.fillRect(0, 0,150, 74)
     -- gfx.setColor(gfx.kColorWhite)
@@ -41,27 +50,28 @@ function GameScene:update()
 end
 
 function GameScene:resetPlayer()
-    self.player:moveTo(self.spawnX, self.spawnY)
+    self.player:moveTo(self.spawn_x, self.spawn_y)
+    self.player:unfreeze()
 end
 
 function GameScene:enterRoom(direction)
-    local level = ldtk.get_neighbours(self.levelName, direction)[1]
+    local level = ldtk.get_neighbours(self.level_name, direction)[1]
     self:goToLevel(level)
     self.player:add()
 
-    local spawnX, spawnY
+    local spawn_x, spawn_y
     if direction == "north" then
-        spawnX, spawnY = self.player.x, 240
+        spawn_x, spawn_y = self.player.x, 240
     elseif direction == "south" then
-        spawnX, spawnY = self.player.x, 0
+        spawn_x, spawn_y = self.player.x, 0
     elseif direction == "east" then
-        spawnX, spawnY = 0, self.player.y
+        spawn_x, spawn_y = 0, self.player.y
     elseif direction == "west" then
-        spawnX, spawnY = 400, self.player.y
+        spawn_x, spawn_y = 400, self.player.y
     end
-    self.player:moveTo(spawnX, spawnY)
-    self.spawnX = spawnX
-    self.spawnY = spawnY
+    self.player:moveTo(spawn_x, spawn_y)
+    self.spawn_x = spawn_x
+    self.spawn_y = spawn_y
 end
 
 function GameScene:getPlayer() 
@@ -70,7 +80,7 @@ end
 
 function GameScene:goToLevel(level_name)
     gfx.sprite.removeAll()
-    self.levelName = level_name
+    self.level_name = level_name
 
 
     self:loadTilemap(level_name)
@@ -114,7 +124,17 @@ function GameScene:loadEntities(level_name)
         elseif entityName == "Spikeball" then
             Spikeball(entityX, entityY, entity)
         elseif entityName == "Ability" then
-            Ability(entityX, entityY, entity)
+            Ability(entityX, entityY, entity, self)
         end
     end
 end 
+
+function GameScene:player_ability_pickup(event, name)
+    print(name)
+    self.player:freeze()
+    self.pickupBox = ItemPickupDialog('Acquired ' .. name .. ' Ability!', self.unfreeze_player, {self})
+end
+
+function GameScene:unfreeze_player()
+    self.player:unfreeze()
+end
