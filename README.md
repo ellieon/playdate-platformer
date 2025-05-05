@@ -1,7 +1,4 @@
 # It's a Platformer Game Innit
-
-A boilerplate setup for developing a Playdate game in VSCode, with access to debugging, full code completion and the ability to build and run through NPM
-
 ## Prerequisites
 
 Make sure the [PlaydateSDK](https://play.date/dev/) is fully installed and the `PLAYDATE_SDK_PATH` environment variable is set to the root of your PlaydateSDK directory
