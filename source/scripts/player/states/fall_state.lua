@@ -21,7 +21,6 @@ function FallState:update(delta_time)
     FallState.super.update(self, delta_time)
     if self.coyote_time > 0 then
         self.coyote_time -= delta_time
-        print(self.coyote_time)
     end
 end
 

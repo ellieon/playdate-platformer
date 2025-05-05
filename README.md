@@ -1,4 +1,4 @@
-# Test Game
+# It's a Platformer Game Innit
 
 A boilerplate setup for developing a Playdate game in VSCode, with access to debugging, full code completion and the ability to build and run through NPM
 
@@ -42,3 +42,4 @@ You can now preview the game in the Playdate Simulator with `npm run simulate`.
 - Build scripts provided by [`pddx`](https://github.com/colingourlay/pddx)
 - [LDtK importer](https://github.com/NicMagnier/PlaydateLDtkImporter)
 - [AnimatedSprite](https://github.com/Whitebrim/AnimatedSprite)
+- [Timeline](https://github.com/mierau/playdate-timeline)
