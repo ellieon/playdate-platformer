@@ -1,8 +1,7 @@
 local gfx <const> = playdate.graphics
-local geometry <const> = playdate.geometry
 local pd <const> = playdate
 
-local delta_time <const> = 1.0 / pd.display.getRefreshRate()
+
 local SCREEN_HEIGHT <const> = pd.display.getHeight()
 local SCREEN_WIDTH <const> = pd.display.getWidth()
 
@@ -23,14 +22,15 @@ function ItemPickupDialog:init(text, close_callback, callback_params)
     self.close_callback = close_callback
     self.callback_params = callback_params
     self:moveTo(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
-    self:setZIndex(1000)
+    self:setZIndex(Z_INDEXES.UI)
+    self:setIgnoresDrawOffset(true)
     self:add()
 end
 
 function ItemPickupDialog:update()
     ItemPickupDialog.super.update(self)
 
-    self.timeline:update(delta_time)
+    self.timeline:update(DELTA_TIME)
 
     local box_progress = self.timeline:getRangeProgress('box')
     local text_progress = self.timeline:getRangeProgress('text')
@@ -43,7 +43,7 @@ function ItemPickupDialog:update()
         self:draw_text(self.timeline:getRangeProgress('text'), fill_width, fill_height)
 
         if(text_progress == 1) then
-            self:draw_button(fill_width, fill_height, delta_time)
+            self:draw_button(fill_width, fill_height)
 
             if pd.buttonJustPressed(pd.kButtonA) then
                 self:remove()
@@ -74,7 +74,7 @@ function ItemPickupDialog:draw_text(progress, fill_width, fill_height)
     end
 end
 
-function ItemPickupDialog:draw_button(fill_width, fill_height, delta_time)
+function ItemPickupDialog:draw_button(fill_width, fill_height)
     if self.button_timer >= 0 then
         gfx.fillCircleAtPoint(fill_width / 2, fill_height - self.button_radius * 2, self.button_radius)
         gfx.drawTextAligned('A', fill_width / 2, fill_height - self.button_radius - font_height, kTextAlignment.center)
@@ -84,5 +84,5 @@ function ItemPickupDialog:draw_button(fill_width, fill_height, delta_time)
         self.button_timer = -0.5
     end
 
-    self.button_timer += delta_time
+    self.button_timer += DELTA_TIME
 end
