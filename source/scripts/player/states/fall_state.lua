@@ -22,6 +22,10 @@ function FallState:update(delta_time)
     if self.coyote_time > 0 then
         self.coyote_time -= delta_time
     end
+
+    if self.player.y_velocity < 0 then
+        self.player.y_velocity += 50
+    end
 end
 
 function FallState:after_move()

@@ -1,13 +1,17 @@
 class("JumpState").extends(AirState)
 
+function JumpState:init(player)
+    JumpState.super.init(self, player)
+    self.jump_time = 0
+    self.jump_start_time = 0
+end
+
 function JumpState:on_enter()
+    JumpState.super.on_enter(self)
     self.player.times_jumped += 1
 
     self.player.y_velocity = self.player.initial_jump_velocity
-    if self.player.y_velocity < self.player.jump_velocity then
-        self.player.y_velocity = self.player.jump_velocity
-    end
-
+    self.jump_time = 0
     self.player.touching_ground = false
 end
 
@@ -16,18 +20,14 @@ function JumpState:update(delta_time)
         return
     end
 
-    if not self.player.input_handler.jump_held then
+    self.jump_time += delta_time
+    local min_jump_achieved = (self.jump_time > self.player.jump_min_time) and not self.player.input_handler.jump_held
+    local max_jump_achieved = self.jump_time > self.player.jump_max_time
+
+    print(min_jump_achieved or max_jump_achieved)
+    if max_jump_achieved or min_jump_achieved then
         self.sm:fall()
         return
-    end
-
-    if self.player.input_handler.jump_held and not self.apex_hit then
-        self.player.y_velocity += self.player.jump_acceleration
-        if self.player.y_velocity < self.player.jump_velocity then
-            self.player.y_velocity = self.player.jump_velocity
-            self.sm:fall()
-            return
-        end
     end
 end
 

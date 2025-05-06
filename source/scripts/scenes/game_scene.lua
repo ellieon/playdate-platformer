@@ -32,7 +32,6 @@ function GameScene:init()
 
     -- self.player:freeze()
     -- self.camera:play_scroll_events()
-
 end
 
 function GameScene:update()

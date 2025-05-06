@@ -10,17 +10,19 @@ import "scripts/libraries/LDtk"
 import "scripts/libraries/timeline"
 
 -- Game files
-import "scripts/game_scene"
-
---util
-import "scripts/util/math"
-import "scripts/util/event_handler"
-import "scripts/util/table"
-
 import "scripts/actor"
 import "scripts/spike"
 import "scripts/spikeball"
 import "scripts/ability"
+
+    --scenes
+    import "scripts/scenes/game_scene"
+    import "scripts/scenes/scene"
+    import "scripts/scenes/map_scene"
+    --util
+    import "scripts/util/math"
+    import "scripts/util/event_handler"
+    import "scripts/util/table"
     --Ui
     import "scripts/ui/item_pickup_dialog.lua"
     import "scripts/ui/level_transition_fade.lua"
