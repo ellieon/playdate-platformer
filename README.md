@@ -1,12 +1,14 @@
 # It's a Platformer Game Innit
 ## Prerequisites
 
-Make sure the [PlaydateSDK](https://play.date/dev/) is fully installed and the `PLAYDATE_SDK_PATH` environment variable is set to the root of your PlaydateSDK directory
+Make sure the [PlaydateSDK](https://play.date/dev/) is fully installed and the `PLAYDATE_SDK_PATH` environment variable is set to the root of your PlaydateSDK directory and the Playdate SDK `bin` folder is on your path
 
 * For example on MacOS your `~/.zshprofile` file should be updated to include the line `export PLAYDATE_SDK_PATH="$HOME/Developer/PlaydateSDK`)
 
-### For VSCode Users
-The following extensions should be installed 
+It is possible to run this project using NPM which must be installed and available if you wish to do so
+
+## For VSCode Users
+The following extensions are reccomended:
 * [Lua](https://marketplace.visualstudio.com/items/?itemName=sumneko.lua)
 * [Lua Plus](https://marketplace.visualstudio.com/items/?itemName=jep-a.lua-plus)
 * [Playdate Debug](https://marketplace.visualstudio.com/items/?itemName=midouest.playdate-debug)
@@ -14,18 +16,25 @@ The following extensions should be installed
 Also [LuaCATS](https://github.com/notpeter/playdate-luacats) should be available, by default the project looks for it in `~/Developer`. This is as simple as cloning `https://github.com/notpeter/playdate-luacats.git`to that directory. If you want to install LuaCATS anywhere else, make sure to update `workspace.library` in `.luarc.json` to the installation directory
 
 ## Developing
+All code is located in the `source` folder, with `main.lua` being the entry point  and `source/scripts` containing all of the Lua scripts used by the game
+
+Levels are designed in [LDtk](https://ldtk.io/), the project file for them is located at `source/levels/world.ldtk`
+
+### Building
+While in the root of the project simply run `pdc source`, this will create a file `source.pdx` which can then be opened in Playdate Simulator included with the SDK, or sideloaded onto your Playdate
+
+## NPM Users
 
 Once you've installed dependencies with `npm install` (or `yarn` / `pnpm`), start the watcher:
 
 ```sh
-npm start
+npm run start
 ```
 
 This will run the `build` and `simulate` tasks whenever files change.
 
-## Building
-
-To build your game's `.pdx`:
+### Building
+To build the game's `.pdx`:
 
 ```sh
 npm run build

@@ -1,13 +1,12 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
-local delta_time <const> = 1.0 / playdate.display.getRefreshRate() -- Change this to something more dynamic
 
 class("Player").extends(AnimatedSprite)
 
 function Player:init(x, y, game_manager)
     self.game_manager = game_manager
 
-    local playerImageTable = gfx.imagetable.new("images/player-table-32-32")
+    local playerImageTable = gfx.imagetable.new("images/kiwi-test-table-32-32")
     Player.super.init(self, playerImageTable)
 
     -- Player attributes
@@ -25,12 +24,12 @@ function Player:init(x, y, game_manager)
     self.air_x_friction = 3
     self.minimum_air_speed = 15
     self.terminal_velocity = 500
-    self.coyote_time =  7 * delta_time -- 7 frames of coyote time
+    self.coyote_time =  7 * DELTA_TIME -- 7 frames of coyote time
 
-    self.dash_frames = 5 * delta_time
+    self.dash_frames = 5 * DELTA_TIME
     self.dash_speed = 300
 
-    self.max_jumps = 0
+    self.max_jumps = 1
     self.dash_unlocked = false
     -- Player state
 
@@ -46,14 +45,14 @@ function Player:init(x, y, game_manager)
     self.disable_gravity = false
 
     self:addState("idle", 1, 1)
-    self:addState("run", 1, 3, {tickStep = 4})
+    self:addState("run", 1, 4, {tickStep = 5})
     self:addState("jump", 4, 4)
     self:addState("fall", 4, 4)
     self:addState("dash", 4, 4)
     self:addState("freeze", 4, 4)
     self.currentState = 'idle'
-    self:playAnimation()
 
+    self:playAnimation()
     self:moveTo(x,y)
     self:setZIndex(Z_INDEXES.Player)
     self:setTag(TAGS.Player)
@@ -88,21 +87,26 @@ function Player:update()
     Player.super.update(self)
     
     self.input_handler:update()
-    self.sm:update(delta_time)
+    self.sm:update(DELTA_TIME)
     self:handleMovementAndCollisions()
     self.sm:after_move()
-    self.currentState = self.sm.active_state
-    self:updateAnimation()
+    --self.currentState = self.sm.active_state
+    self:changeState(self.sm.active_state)
+    --self:updateAnimation()
+
 end
 
 
 function Player:handleMovementAndCollisions()
     self:apply_gravity()
 
-    local target_x = self.x + (self.x_velocity * delta_time)
-    local target_y = self.y + (self.y_velocity * delta_time)
+    local target_x = self.x + (self.x_velocity * DELTA_TIME)
+    local target_y = self.y + (self.y_velocity * DELTA_TIME)
 
-    local _, _, collisions, length = self:moveWithCollisions(target_x, target_y) 
+    local actualX, actualY, collisions, length = self:moveWithCollisions(target_x, target_y) 
+
+    self.x = actualX
+    self.y = actualY
  
     self.touching_ground = false
     self.touching_ceiling = false
@@ -142,15 +146,15 @@ function Player:handleMovementAndCollisions()
          self.globalFlip = 0
      end
  
-     if self.x < 0 then
-         self.game_manager:enterRoom("west")
-     elseif self.x > 400 then
-         self.game_manager:enterRoom("east")
-     elseif self.y < 0 then
-         self.game_manager:enterRoom("north")
-     elseif self.y > 240 then
-         self.game_manager:enterRoom("south")
-     end
+    --  if self.x < 0 then
+    --      self.game_manager:enterRoom("west")
+    --  elseif self.x > 400 then
+    --      self.game_manager:enterRoom("east")
+    --  elseif self.y < 0 then
+    --      self.game_manager:enterRoom("north")
+    --  elseif self.y > 240 then
+    --      self.game_manager:enterRoom("south")
+    --  end
  
      if died then
          self:freeze()

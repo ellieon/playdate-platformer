@@ -12,23 +12,25 @@ import "scripts/libraries/timeline"
 -- Game files
 import "scripts/game_scene"
 
-import "util/math"
-import "util/event_handler"
+--util
+import "scripts/util/math"
+import "scripts/util/event_handler"
+import "scripts/util/table"
 
 import "scripts/actor"
 import "scripts/spike"
 import "scripts/spikeball"
 import "scripts/ability"
-
     --Ui
     import "scripts/ui/item_pickup_dialog.lua"
-
+    import "scripts/ui/level_transition_fade.lua"
     -- State machine
     import "scripts/state_machine/state"
     import "scripts/state_machine/state_machine"        
     -- Player
     import "scripts/player/player"
     import "scripts/player/player_input_handler"
+    import "scripts/player/player_camera"
         -- States
         import "scripts/player/states/player_state"
         import "scripts/player/states/ground_state"
@@ -40,3 +42,19 @@ import "scripts/ability"
         import "scripts/player/states/jump_state"
         import "scripts/player/states/dash_state"
         import "scripts/player/states/freeze_state"
+
+
+TAGS = {
+    Player = 1,
+    Hazard = 2,
+    Pickup = 3,
+}
+
+Z_INDEXES = {
+    Player = 100,
+    Hazard = 200,
+    Pickup = 50,
+    UI = 10000
+}
+
+DELTA_TIME = 1.0 / playdate.display.getRefreshRate()

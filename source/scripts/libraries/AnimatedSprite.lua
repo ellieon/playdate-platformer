@@ -1,3 +1,4 @@
+---@diagnostic disable: redundant-parameter
 -----------------------------------------------
 --- Sprite class extension with support of  ---
 --- imagetables and finite state machine,   ---
@@ -31,7 +32,7 @@ function AnimatedSprite:init(imagetable, states, animate)
 	end
 	self.imagetable = imagetable
 	assert(self.imagetable, "Imagetable is nil. Check if it was loaded correctly.")
-
+	
 	self:add()
 
 	self.globalFlip = gfx.kImageUnflipped

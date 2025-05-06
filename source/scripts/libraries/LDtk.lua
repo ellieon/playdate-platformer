@@ -1,3 +1,4 @@
+---@diagnostic disable: need-check-nil, undefined-field
 -- version 1.07
 --
 -- Copyright 2022-2023 Nic Magnier
@@ -127,7 +128,7 @@ function LDtk.load( ldtk_file, use_lua_levels )
 	_use_external_files = data.externalLevels
 
 	-- handle the tilesets
-	for tileset_index, tileset_data in ipairs(data.defs.tilesets) do
+		for tileset_index, tileset_data in ipairs(data.defs.tilesets) do
 		local tileset = {}
 
 		_tilesets[ tileset_data.uid ] = tileset

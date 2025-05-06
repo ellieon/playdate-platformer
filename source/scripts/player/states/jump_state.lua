@@ -9,7 +9,6 @@ function JumpState:on_enter()
     end
 
     self.player.touching_ground = false
-    self.player.input_handler:reset_jump_buffer()
 end
 
 function JumpState:update(delta_time)
