@@ -1,9 +1,11 @@
 # It's a Platformer Game Innit
 ## Prerequisites
 
-Make sure the [PlaydateSDK](https://play.date/dev/) is fully installed and the `PLAYDATE_SDK_PATH` environment variable is set to the root of your PlaydateSDK directory
+Make sure the [PlaydateSDK](https://play.date/dev/) is fully installed and the `PLAYDATE_SDK_PATH` environment variable is set to the root of your PlaydateSDK directory and the Playdate SDK `bin` folder is on your path
 
 * For example on MacOS your `~/.zshprofile` file should be updated to include the line `export PLAYDATE_SDK_PATH="$HOME/Developer/PlaydateSDK`)
+
+It is possible to run this project using NPM which must be installed and available if you wish to do so
 
 ### For VSCode Users
 The following extensions should be installed 
@@ -15,15 +17,19 @@ Also [LuaCATS](https://github.com/notpeter/playdate-luacats) should be available
 
 ## Developing
 
+While in the root of the project simply run `pdc source`, this will create a file `source.pdx` which can then be opened in Playdate Simulator included with the SDK, or sideloaded onto your Playdate
+
+### NPM Users
+
 Once you've installed dependencies with `npm install` (or `yarn` / `pnpm`), start the watcher:
 
 ```sh
-npm start
+npm run start
 ```
 
 This will run the `build` and `simulate` tasks whenever files change.
 
-## Building
+#### Building
 
 To build your game's `.pdx`:
 
