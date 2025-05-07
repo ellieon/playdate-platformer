@@ -3,7 +3,7 @@ local ldtk <const> = LDtk
 
 local usePrecompiledLevels = not playdate.simulator
 
-ldtk.load("levels/world.ldtk", usePrecompiledLevels)
+ldtk.load("levels/world.ldtk", false)
 
 class("GameScene").extends()
 local font = gfx.font.new('fonts/font-pixieval')
@@ -17,6 +17,10 @@ function GameScene:init()
     self.camera.x = self.spawn_x
     self.camera.y = self.spawn_y
     self.moving = false
+
+    local menuItem = playdate.getSystemMenu():addMenuItem('Map',  function ()
+        SCENE_MANAGER:switch_scene(MapScene)
+    end)
     -- self.camera:add_scroll_event('0', self.camera.x, self.camera.y, self.camera.x, self.camera.y, 1)
 
     -- self.camera:add_scroll_event('1', self.camera.x, self.camera.y, 1250, self.camera.y, 1)
@@ -46,6 +50,7 @@ function GameScene:update()
     if not math.pointInRect(self.player_world_point, self.level_rect) then
         self:move_room()
     end
+
 end
 
 function GameScene:move_room()
@@ -120,7 +125,6 @@ function GameScene:goToLevel(level_name)
 
     self:loadTilemap(level_name)
     self:loadEntities(level_name)
-
 end
 
 function GameScene:loadTilemap(level_name)

@@ -11,14 +11,21 @@ local _ = {}
 
 class('MapScene').extends(Scene)
 function MapScene:init() 
+    print('map init')
     MapScene.super.init(self)
     self.world_rect = _.determine_map_size()
-    self:construct_map_image()
-    self:generate_ui_frame()
+    self.map_sprite = self:construct_map_image()
+    self.ui_sprite = self:generate_ui_frame()
     self.x = 0
     self.y = 0
     self.scale = 1
 
+end
+
+function MapScene:on_remove()
+    MapScene.super.on_remove(self)
+    self.map_sprite:remove()
+    self.ui_sprite:remove()
 end
 
 function MapScene:update()
@@ -36,15 +43,21 @@ function MapScene:update()
         self.y -= 5
     end
 
-    if pd.buttonIsPressed(pd.kButtonA) then
-        self.scale += 0.1
-    end
+    -- if pd.buttonIsPressed(pd.kButtonA) then
+    --     self.scale += 0.1
+    -- end
 
-    if pd.buttonIsPressed(pd.kButtonB) then
-        self.scale -= 0.1
-        if self.scale < 0.5 then
-            self.scale = 0.5
-        end
+    -- if pd.buttonIsPressed(pd.kButtonB) then
+    --     self.scale -= 0.1
+    --     if self.scale < 0.5 then
+    --         self.scale = 0.5
+    --     end
+    -- end
+
+    if pd.buttonJustPressed(pd.kButtonB) then
+        print('popped')
+        SCENE_MANAGER:switch_scene(GameScene)
+        return
     end
     self.map_sprite:moveTo(self.x, self.y)
     self.map_sprite:setScale(self.scale, self.scale)
@@ -70,9 +83,9 @@ function MapScene:construct_map_image()
     
     local scale = math.max(self.scale, self.scale)
 
-    self.map_image = gfx.image.new(self.world_rect.width * self.scale, self.world_rect.height * self.scale)
+    local map_image = gfx.image.new(self.world_rect.width * self.scale, self.world_rect.height * self.scale)
     gfx.setBackgroundColor(gfx.kColorBlack)
-    gfx.pushContext(self.map_image)
+    gfx.pushContext(map_image)
         gfx.setDrawOffset(-self.world_rect.x * self.scale,-self.world_rect.y * self.scale)
         gfx.fillRect(self.world_rect.x, self.world_rect.y, self.world_rect.width, self.world_rect.height)
         gfx.setColor(gfx.kColorWhite)
@@ -85,22 +98,23 @@ function MapScene:construct_map_image()
             gfx.fillRect(x + 2, y + 2, width - 4, height - 4)
         end
     gfx.popContext()
-    playdate.datastore.writeImage(self.map_image, 'map.gif')
 
-    self.map_sprite = gfx.sprite.new(self.map_image)
-    self.map_sprite:add()
-    self.map_sprite:setCenter(0,0)
-    self.map_sprite:moveTo(0,0)
-    self.map_sprite:setZIndex(9998)
+    local map_sprite = gfx.sprite.new(map_image)
+    map_sprite:add()
+    map_sprite:setIgnoresDrawOffset(true)
+    map_sprite:setCenter(0,0)
+    map_sprite:moveTo(0,0)
+    map_sprite:setZIndex(9998)
+
+    return map_sprite
   
 end
 
 function MapScene:generate_ui_frame()
     local width, height = pd.display.getWidth(), pd.display.getHeight()
-    self.map_frame = gfx.image.new(width, height)
-    playdate.datastore.writeImage(self.map_image, 'map.gif')
+    local map_frame = gfx.image.new(width, height)
 
-    gfx.pushContext(self.map_frame)
+    gfx.pushContext(map_frame)
         gfx.setLineWidth(10)
      
         --Draw thick black border
@@ -129,10 +143,12 @@ function MapScene:generate_ui_frame()
         gfx.drawRoundRect(311, 201, 80, 30, 3)
     gfx.popContext()
 
-    self.ui_sprite = gfx.sprite.new(self.map_frame)
-    self.ui_sprite:setIgnoresDrawOffset(true)
-    self.ui_sprite:add()
-    self.ui_sprite:setCenter(0,0)
-    self.ui_sprite:moveTo(0,0)
-    self.ui_sprite:setZIndex(9999)
+    local ui_sprite = gfx.sprite.new(map_frame)
+    ui_sprite:setIgnoresDrawOffset(true)
+    ui_sprite:add()
+    ui_sprite:setCenter(0,0)
+    ui_sprite:moveTo(0,0)
+    ui_sprite:setZIndex(9999)
+
+    return ui_sprite
 end

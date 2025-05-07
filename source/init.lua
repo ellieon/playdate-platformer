@@ -19,6 +19,7 @@ import "scripts/ability"
     import "scripts/scenes/game_scene"
     import "scripts/scenes/scene"
     import "scripts/scenes/map_scene"
+    import "scripts/scenes/scene_manager"
     --util
     import "scripts/util/math"
     import "scripts/util/event_handler"
@@ -56,7 +57,11 @@ Z_INDEXES = {
     Player = 100,
     Hazard = 200,
     Pickup = 50,
-    UI = 10000
+    UI = 10000,
+    Transition_Effect = 20000
 }
 
 DELTA_TIME = 1.0 / playdate.display.getRefreshRate()
+SCREEN_WIDTH = playdate.display.getWidth()
+SCREEN_HEIGHT = playdate.display.getHeight()
+SCENE_MANAGER = SceneManager()
