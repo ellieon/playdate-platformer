@@ -44,7 +44,7 @@ function Player:init(x, y, game_manager)
     self.disable_gravity = false
 
     self:addState("idle", 1, 10,{tickStep = 4})
-    self:addState("run", 11, 18, {tickStep = 5})
+    self:addState("run", 11, 18, {tickStep = 4})
     self:addState("jump", 21, 26, {tickStep = 4})
     self:addState("fall", 26, 26, {tickStep = 4})
     self:addState("dash", 31, 31)
