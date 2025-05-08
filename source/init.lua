@@ -16,10 +16,12 @@ import "scripts/spikeball"
 import "scripts/ability"
 
     --scenes
-    import "scripts/scenes/game_scene"
     import "scripts/scenes/scene"
+    import "scripts/scenes/game_scene"
     import "scripts/scenes/map_scene"
     import "scripts/scenes/scene_manager"
+    import "scripts/scenes/menu_scene"
+    
     --util
     import "scripts/util/math"
     import "scripts/util/event_handler"

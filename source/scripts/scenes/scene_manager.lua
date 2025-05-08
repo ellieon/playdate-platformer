@@ -73,7 +73,8 @@ function SceneManager:wipe_transition(start_value, end_value)
 end
 
 function SceneManager:create_transition_sprite()
-    local rect_image = gfx.image.new(SCREEN_WIDTH, SCREEN_HEIGHT, gfx.kColorBlack)
+    local rect_image = gfx.image.new('images/swipe-image')
+    -- local rect_image = gfx.image.new(SCREEN_WIDTH, SCREEN_HEIGHT, gfx.kColorBlack)
     local sprite = gfx.sprite.new(rect_image)
     sprite:moveTo(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     sprite:setZIndex(Z_INDEXES.Transition_Effect)

@@ -3,12 +3,11 @@ local ldtk <const> = LDtk
 
 local usePrecompiledLevels = not playdate.simulator
 
-ldtk.load("levels/world.ldtk", false)
 
 class("GameScene").extends()
-local font = gfx.font.new('fonts/font-pixieval')
 
 function GameScene:init()
+    print('this is getting called for some reason??')
     self.event_handler = EventHandler()
     self.event_handler:subscribe('ability_picked_up', self, self.player_ability_pickup)
     self.camera = PlayerCamera()
@@ -17,6 +16,13 @@ function GameScene:init()
     self.camera.x = self.spawn_x
     self.camera.y = self.spawn_y
     self.moving = false
+
+
+    ldtk.load("levels/world.ldtk", usePrecompiledLevels)
+
+    if not usePrecompiledLevels then
+        ldtk.export_to_lua_files()
+    end
 
     local menuItem = playdate.getSystemMenu():addMenuItem('Map',  function ()
         SCENE_MANAGER:switch_scene(MapScene)

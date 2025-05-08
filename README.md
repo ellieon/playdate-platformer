@@ -49,3 +49,4 @@ You can now preview the game in the Playdate Simulator with `npm run simulate`.
 - [LDtK importer](https://github.com/NicMagnier/PlaydateLDtkImporter)
 - [AnimatedSprite](https://github.com/Whitebrim/AnimatedSprite)
 - [Timeline](https://github.com/mierau/playdate-timeline)
+- [ZeggyGames 2D Pixel Art Character Template](https://zegley.itch.io/2d-platformermetroidvania-asset-pack)
