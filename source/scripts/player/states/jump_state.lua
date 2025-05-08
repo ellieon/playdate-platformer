@@ -24,7 +24,6 @@ function JumpState:update(delta_time)
     local min_jump_achieved = (self.jump_time > self.player.jump_min_time) and not self.player.input_handler.jump_held
     local max_jump_achieved = self.jump_time > self.player.jump_max_time
 
-    print(min_jump_achieved or max_jump_achieved)
     if max_jump_achieved or min_jump_achieved then
         self.sm:fall()
         return

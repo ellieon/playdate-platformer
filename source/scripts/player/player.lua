@@ -1,7 +1,7 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
-class("Player").extends(AnimatedSprite)
+class("Player").extends(Actor)
 
 function Player:init(x, y, game_manager)
     self.game_manager = game_manager
@@ -10,15 +10,12 @@ function Player:init(x, y, game_manager)
     Player.super.init(self, playerImageTable)
 
     -- Player attributes
-
     self.x_acceleration = 15
     self.max_speed = 130
     self.x_turn_acceleration = 45
     self.x_run_deceleration = 15
 
-    -- self.jump_velocity = -400
     self.initial_jump_velocity = -600
-    -- self.jump_acceleration = -50
     self.jump_min_time = 0
     self.jump_max_time = 0.3
 
@@ -33,8 +30,8 @@ function Player:init(x, y, game_manager)
 
     self.max_jumps = 2
     self.dash_unlocked = true
-    -- Player state
 
+    -- Player state
     self.x_velocity = 0
     self.y_velocity = 0
     self.times_jumped = 0
@@ -93,12 +90,8 @@ function Player:update()
     self.sm:update(DELTA_TIME)
     self:handleMovementAndCollisions()
     self.sm:after_move()
-    --self.currentState = self.sm.active_state
     self:changeState(self.sm.active_state)
-    --self:updateAnimation()
-
 end
-
 
 function Player:handleMovementAndCollisions()
     self:apply_gravity()

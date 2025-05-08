@@ -7,26 +7,22 @@ local usePrecompiledLevels = not playdate.simulator
 class("GameScene").extends()
 
 function GameScene:init()
-    print('this is getting called for some reason??')
     self.event_handler = EventHandler()
     self.event_handler:subscribe('ability_picked_up', self, self.player_ability_pickup)
     self.camera = PlayerCamera()
-    self:goToLevel("Level_0")
+    self:goToLevel("Level_0", true)
     self.player = Player(self.spawn_x, self.spawn_y + 16, self)
     self.camera.x = self.spawn_x
     self.camera.y = self.spawn_y
     self.moving = false
-
-
+    
     ldtk.load("levels/world.ldtk", usePrecompiledLevels)
 
     if not usePrecompiledLevels then
         ldtk.export_to_lua_files()
     end
 
-    local menuItem = playdate.getSystemMenu():addMenuItem('Map',  function ()
-        SCENE_MANAGER:switch_scene(MapScene)
-    end)
+
     -- self.camera:add_scroll_event('0', self.camera.x, self.camera.y, self.camera.x, self.camera.y, 1)
 
     -- self.camera:add_scroll_event('1', self.camera.x, self.camera.y, 1250, self.camera.y, 1)
@@ -44,12 +40,23 @@ function GameScene:init()
     -- self.camera:play_scroll_events()
 end
 
+function GameScene:on_focus()
+    self.mapMenuItem = playdate.getSystemMenu():addMenuItem('Map',  function ()
+        SCENE_MANAGER:push_scene(MapScene)
+    end)
+
+    --set camera position
+end
+
+function GameScene:on_lose_focus()
+    playdate.getSystemMenu():removeMenuItem(self.mapMenuItem)
+end
+
 function GameScene:update()
-    gfx.setFont(font)
     self.camera:update()
 
     self.camera.target_x = self.player.x
-    self.camera.target_y = self.player.y
+    self.camera.target_y = self.player.y + 40
     
     self.player_world_point = {x= self.player.x + self.level_rect.x, y = self.player.y + self.level_rect.y}
 
@@ -93,7 +100,7 @@ function GameScene:move_room()
 
                 self.spawn_x, self.spawn_y = self:convert_world_point_to_local(self.player_world_point, rect)
                 self.camera:set_position(self.spawn_x, self.spawn_y)
-                self:goToLevel(name)
+                self:goToLevel(name, true)
                 self.player:add()
                 self.player:moveTo(self.spawn_x, self.spawn_y)
                 self.player:unfreeze()
@@ -122,7 +129,7 @@ function GameScene:getPlayer()
     return self.player
 end
 
-function GameScene:goToLevel(level_name)
+function GameScene:goToLevel(level_name, spawn_entities)
     gfx.sprite.removeAll()
     self.level_name = level_name
     self.level_rect = ldtk.get_rect(level_name)
@@ -130,7 +137,9 @@ function GameScene:goToLevel(level_name)
     self.camera:set_level_bounds(self.level_rect.width, self.level_rect.height)
 
     self:loadTilemap(level_name)
-    self:loadEntities(level_name)
+    if spawn_entities then
+        self:loadEntities(level_name)
+    end
 end
 
 function GameScene:loadTilemap(level_name)
@@ -187,4 +196,8 @@ function GameScene:player_ability_pickup(event, name)
         self.player:unfreeze()
         self.pickupBox:remove()
     end, {self})
+end
+
+function GameScene:get_scene_name()
+    return "Game"
 end

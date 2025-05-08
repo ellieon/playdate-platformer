@@ -11,7 +11,6 @@ local _ = {}
 
 class('MapScene').extends(Scene)
 function MapScene:init() 
-    print('map init')
     MapScene.super.init(self)
     self.world_rect = _.determine_map_size()
     self.map_sprite = self:construct_map_image()
@@ -20,12 +19,6 @@ function MapScene:init()
     self.y = 0
     self.scale = 1
 
-end
-
-function MapScene:on_remove()
-    MapScene.super.on_remove(self)
-    self.map_sprite:remove()
-    self.ui_sprite:remove()
 end
 
 function MapScene:update()
@@ -43,20 +36,8 @@ function MapScene:update()
         self.y -= 5
     end
 
-    -- if pd.buttonIsPressed(pd.kButtonA) then
-    --     self.scale += 0.1
-    -- end
-
-    -- if pd.buttonIsPressed(pd.kButtonB) then
-    --     self.scale -= 0.1
-    --     if self.scale < 0.5 then
-    --         self.scale = 0.5
-    --     end
-    -- end
-
     if pd.buttonJustPressed(pd.kButtonB) then
-        print('popped')
-        SCENE_MANAGER:switch_scene(GameScene)
+        SCENE_MANAGER:pop_scene()
         return
     end
     self.map_sprite:moveTo(self.x, self.y)
@@ -107,7 +88,6 @@ function MapScene:construct_map_image()
     map_sprite:setZIndex(9998)
 
     return map_sprite
-  
 end
 
 function MapScene:generate_ui_frame()
@@ -151,4 +131,8 @@ function MapScene:generate_ui_frame()
     ui_sprite:setZIndex(9999)
 
     return ui_sprite
+end
+
+function MapScene:get_scene_name()
+    return "Map"
 end

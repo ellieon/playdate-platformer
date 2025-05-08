@@ -9,7 +9,7 @@ function MenuScene:init()
     self.timeline = Timeline()
 
     self.timeline:addRange('image', 1.0, 2.0)   
-    self.timeline:appendRange('toptext', 0.7)
+    self.timeline:appendRange('text', 0.7)
     self.timeline:appendRange('wait', 1)
     self.timeline:appendRange('offsetleft', 1)
 
@@ -23,7 +23,6 @@ function MenuScene:init()
     self.top_sprite = gfx.sprite.new(top_text_image)
     self.top_sprite:moveTo(-80, 65) -- End at 160, 65
     self.top_sprite:add()
-    
 
     local bottom_text_image = gfx.image.new('images/menu/quest')
     self.bottom_sprite = gfx.sprite.new(bottom_text_image)
@@ -67,15 +66,18 @@ function MenuScene:update_kiwi_image()
 end
 
 function MenuScene:update_top_image()
-    local progress = self.timeline:getRangeProgress('toptext')
+    local progress = self.timeline:getRangeProgress('text')
     local x_pos = playdate.easingFunctions.outInCirc(progress, -80, 240, 1)
-   -- print(progress)
     self.top_sprite:moveTo(x_pos, self.top_sprite.y)    
 end
 
 function MenuScene:update_bottom_image()
-    local progress = self.timeline:getRangeProgress('toptext')
+    local progress = self.timeline:getRangeProgress('text')
     local x_pos = playdate.easingFunctions.outInCirc(progress, 500, -280, 1)
-   -- print(progress)
     self.bottom_sprite:moveTo(x_pos, self.bottom_sprite.y)    
+end
+
+
+function MenuScene:get_scene_name()
+    return "Menu"
 end
