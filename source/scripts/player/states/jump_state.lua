@@ -13,6 +13,9 @@ function JumpState:on_enter()
     self.player.y_velocity = self.player.initial_jump_velocity
     self.jump_time = 0
     self.player.touching_ground = false
+
+    --would prefer this to be done by the state machine callback but they dont pass state through properly rn
+    self.player.input_handler.jump_buffer = 0
 end
 
 function JumpState:update(delta_time)

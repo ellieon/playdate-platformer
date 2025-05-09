@@ -1,52 +1,71 @@
 local gfx <const> = playdate.graphics
 local pd <const> = playdate
-local ldtk <const> = LDtk
-
-local usePrecompiledLevels = not playdate.simulator
-
-ldtk.load("levels/world.ldtk", usePrecompiledLevels)
 
 local MINIMUM_MAP_SCALE <const> = 0.05
 local _ = {}
 
+class('MapSceneInputHandler').extends()
+function MapSceneInputHandler:init()
+    self.x_v = 0
+    self.y_v = 0
+    self.b_pressed = false
+end
+
+function MapSceneInputHandler:update()
+    self.x_v = 0
+    self.y_v = 0
+    if pd.buttonIsPressed(pd.kButtonLeft) then
+        self.x_v = 1
+    end
+    if pd.buttonIsPressed(pd.kButtonRight)  then
+        self.x_v = -1
+    end
+    if pd.buttonIsPressed(pd.kButtonUp) then
+        self.y_v = 1
+    end
+    if pd.buttonIsPressed(pd.kButtonDown)  then
+        self.y_v = -1
+    end
+
+    if pd.buttonJustPressed(pd.kButtonB) then
+        self.b_pressed = true
+        return
+    else
+        self.b_pressed = false
+    end
+end
+
+
 class('MapScene').extends(Scene)
 function MapScene:init() 
     MapScene.super.init(self)
+    self.input_handler = MapSceneInputHandler()
     self.world_rect = _.determine_map_size()
     self.map_sprite = self:construct_map_image()
     self.ui_sprite = self:generate_ui_frame()
     self.x = 0
     self.y = 0
     self.scale = 1
-
 end
 
 function MapScene:update()
     MapScene.super.update(self)
-    if pd.buttonIsPressed(pd.kButtonLeft) then
-        self.x += 5
-    end
-    if pd.buttonIsPressed(pd.kButtonRight)  then
-        self.x -= 5
-    end
-    if pd.buttonIsPressed(pd.kButtonUp) then
-        self.y += 5
-    end
-    if pd.buttonIsPressed(pd.kButtonDown)  then
-        self.y -= 5
-    end
+    
+    self.x += self.input_handler.x_v * 5
+    self.y += self.input_handler.y_v * 5
 
-    if pd.buttonJustPressed(pd.kButtonB) then
+    if self.input_handler.b_pressed then
         SCENE_MANAGER:pop_scene()
         return
     end
+
     self.map_sprite:moveTo(self.x, self.y)
     self.map_sprite:setScale(self.scale, self.scale)
 end
 
 function _.determine_map_size() 
     --Move this as part of LDtk importer to save performance
-    local rects = ldtk.get_level_rects()
+    local rects = LDTK.get_level_rects()
     local min_x, min_y, max_x, max_y = 0, 0, 0, 0
     for _, r in pairs(rects) do
         min_x = math.min(min_x, r.x)
@@ -70,7 +89,7 @@ function MapScene:construct_map_image()
         gfx.setDrawOffset(-self.world_rect.x * self.scale,-self.world_rect.y * self.scale)
         gfx.fillRect(self.world_rect.x, self.world_rect.y, self.world_rect.width, self.world_rect.height)
         gfx.setColor(gfx.kColorWhite)
-        local rects = ldtk.get_level_rects()
+        local rects = LDTK.get_level_rects()
         for _, r in pairs(rects) do
             gfx.setColor(gfx.kColorWhite)
             local x, y, width, height = r.x * scale, r.y * self.scale, r.width * scale, r.height * scale
@@ -135,4 +154,10 @@ end
 
 function MapScene:get_scene_name()
     return "Map"
+end
+
+function MapScene:get_input_handler()
+    MapScene.super.get_input_handler(self)
+
+    return self.input_handler
 end

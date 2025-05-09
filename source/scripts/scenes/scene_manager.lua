@@ -8,6 +8,11 @@ function SceneManager:init()
 end
 
 function SceneManager:update()
+    local scene = self:get_current_scene()
+    local input_handler = scene:get_input_handler()
+    if input_handler then
+        input_handler:update()
+    end
     self.scenes[#self.scenes]:update() 
 end
 

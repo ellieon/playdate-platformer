@@ -9,3 +9,5 @@ function Scene:on_lose_focus() end
 function Scene:on_remove() end
 
 function Scene:get_scene_name() end
+
+function Scene:get_input_handler() end

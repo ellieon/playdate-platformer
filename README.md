@@ -1,4 +1,4 @@
-# It's a Platformer Game Innit
+# Kiwi Quest
 ## Prerequisites
 
 Make sure the [PlaydateSDK](https://play.date/dev/) is fully installed and the `PLAYDATE_SDK_PATH` environment variable is set to the root of your PlaydateSDK directory and the Playdate SDK `bin` folder is on your path

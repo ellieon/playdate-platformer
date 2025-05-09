@@ -10,22 +10,22 @@ function Player:init(x, y, game_manager)
     Player.super.init(self, playerImageTable)
 
     -- Player attributes
-    self.x_acceleration = 15
+    self.x_acceleration = 450
     self.max_speed = 130
-    self.x_turn_acceleration = 45
-    self.x_run_deceleration = 15
+    self.x_turn_acceleration = 1300
+    self.x_run_deceleration = 450
 
-    self.initial_jump_velocity = -600
+    self.initial_jump_velocity = -550
     self.jump_min_time = 0
-    self.jump_max_time = 0.3
+    self.jump_max_time = 0.4
 
-    self.gravity = 30
-    self.air_x_friction = 7
+    self.gravity = 900
+    self.air_x_friction = 100
     self.minimum_air_speed = 15
     self.terminal_velocity = 500
     self.coyote_time =  7 * DELTA_TIME -- 7 frames of coyote time
 
-    self.dash_frames = 5 * DELTA_TIME
+    self.dash_frames = 30 * DELTA_TIME
     self.dash_speed = 300
 
     self.max_jumps = 2
@@ -43,11 +43,11 @@ function Player:init(x, y, game_manager)
     self.dead = false
     self.disable_gravity = false
 
-    self:addState("idle", 1, 10,{tickStep = 4})
-    self:addState("run", 11, 18, {tickStep = 4})
-    self:addState("jump", 21, 26, {tickStep = 4})
-    self:addState("fall", 26, 26, {tickStep = 4})
-    self:addState("dash", 31, 31)
+    self:addState("idle", 1, 10,{tickStep = 8})
+    self:addState("run", 11, 18, {tickStep = 8})
+    self:addState("jump", 21, 26, {tickStep = 8})
+    self:addState("fall", 26, 26, {tickStep = 8})
+    self:addState("dash", 31, 35)
     self:addState("freeze", 4, 4)
     self.currentState = 'idle'
 
@@ -85,8 +85,6 @@ end
 
 function Player:update()
     Player.super.update(self)
-    
-    self.input_handler:update()
     self.sm:update(DELTA_TIME)
     self:handleMovementAndCollisions()
     self.sm:after_move()
@@ -166,7 +164,7 @@ function Player:handleMovementAndCollisions()
         return
     end
 
-    self.y_velocity += self.gravity
+    self.y_velocity += self.gravity * DELTA_TIME
 
     if(self.y_velocity > self.terminal_velocity) then
         self.y_velocity = self.terminal_velocity

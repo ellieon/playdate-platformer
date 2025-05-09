@@ -1,8 +1,4 @@
 local gfx <const> = playdate.graphics
-local ldtk <const> = LDtk
-
-local usePrecompiledLevels = not playdate.simulator
-
 
 class("GameScene").extends()
 
@@ -15,29 +11,6 @@ function GameScene:init()
     self.camera.x = self.spawn_x
     self.camera.y = self.spawn_y
     self.moving = false
-    
-    ldtk.load("levels/world.ldtk", usePrecompiledLevels)
-
-    if not usePrecompiledLevels then
-        ldtk.export_to_lua_files()
-    end
-
-
-    -- self.camera:add_scroll_event('0', self.camera.x, self.camera.y, self.camera.x, self.camera.y, 1)
-
-    -- self.camera:add_scroll_event('1', self.camera.x, self.camera.y, 1250, self.camera.y, 1)
-    -- self.camera:add_scroll_event('2', 1250, self.camera.y, 1250, 392, 1)
-    -- self.camera:add_scroll_event('3', 1250, 392, 465, 392, 2)
-    -- self.camera:add_scroll_event('4', 465, 392, 465, 570, .75)
-    -- self.camera:add_scroll_event('5', 465, 570, 110, 570, 1)
-    -- self.camera:add_scroll_event('6', 110, 570, 110, 570, 2)
-
-
-    -- self.camera:add_scroll_event('7', 465, 570, self.player.x, self.player.y, 0.5, function () self.player:unfreeze() end, self)
-
-
-    -- self.player:freeze()
-    -- self.camera:play_scroll_events()
 end
 
 function GameScene:on_focus()
@@ -45,7 +18,12 @@ function GameScene:on_focus()
         SCENE_MANAGER:push_scene(MapScene)
     end)
 
-    --set camera position
+    if not self.mainMenuItem then
+        self.mainMenuItem = playdate.getSystemMenu():addMenuItem('Menu', function ()
+            playdate.getSystemMenu():removeAllMenuItems()
+            SCENE_MANAGER:switch_scene(MenuScene)
+        end)
+    end
 end
 
 function GameScene:on_lose_focus()
@@ -82,14 +60,14 @@ function GameScene:move_room()
         direction = 'west'
     end
 
-    local neighbours = ldtk.get_neighbours(self.level_name, direction)
+    local neighbours = LDTK.get_neighbours(self.level_name, direction)
     if not neighbours then
         return
     end
 
     for i=1, #neighbours, 1 do
         local name = neighbours[i]
-        local rect = ldtk.get_rect(name)
+        local rect = LDTK.get_rect(name)
         
         if math.pointInRect(self.player_world_point, rect) then
             self.moving = true
@@ -109,8 +87,6 @@ function GameScene:move_room()
                     fade:remove() 
                     self.moving = false
                 end, {self, fade})
-
-                
             end, {self, rect, name, fade})
         end
     end
@@ -132,7 +108,7 @@ end
 function GameScene:goToLevel(level_name, spawn_entities)
     gfx.sprite.removeAll()
     self.level_name = level_name
-    self.level_rect = ldtk.get_rect(level_name)
+    self.level_rect = LDTK.get_rect(level_name)
 
     self.camera:set_level_bounds(self.level_rect.width, self.level_rect.height)
 
@@ -143,11 +119,11 @@ function GameScene:goToLevel(level_name, spawn_entities)
 end
 
 function GameScene:loadTilemap(level_name)
-    local layers = ldtk.get_layers(level_name)
+    local layers = LDTK.get_layers(level_name)
     assert(layers)
     for layer_name, layer in pairs(layers) do
         if layer.tiles then
-            local tilemap = ldtk.create_tilemap(level_name, layer_name)
+            local tilemap = LDTK.create_tilemap(level_name, layer_name)
 
             local layerSprite = gfx.sprite.new()
             assert(tilemap)
@@ -158,7 +134,7 @@ function GameScene:loadTilemap(level_name)
             layerSprite:setUpdatesEnabled(false)
             layerSprite:add()
 
-            local emptyTiles = ldtk.get_empty_tileIDs(level_name, "Solid", layer_name)
+            local emptyTiles = LDTK.get_empty_tileIDs(level_name, "Solid", layer_name)
 
             if emptyTiles then
                 gfx.sprite.addWallSprites(tilemap, emptyTiles)
@@ -168,7 +144,7 @@ function GameScene:loadTilemap(level_name)
 end
 
 function GameScene:loadEntities(level_name)
-    local entities = ldtk.get_entities(level_name)
+    local entities = LDTK.get_entities(level_name)
 
     assert(entities)
     for _, entity in ipairs(entities) do
@@ -200,4 +176,8 @@ end
 
 function GameScene:get_scene_name()
     return "Game"
+end
+
+function GameScene:get_input_handler()
+    return self.player.input_handler
 end

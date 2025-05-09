@@ -63,7 +63,18 @@ Z_INDEXES = {
     Transition_Effect = 20000
 }
 
+playdate.display.setRefreshRate(50)
 DELTA_TIME = 1.0 / playdate.display.getRefreshRate()
 SCREEN_WIDTH = playdate.display.getWidth()
 SCREEN_HEIGHT = playdate.display.getHeight()
 SCENE_MANAGER = SceneManager()
+
+LDTK = LDtk
+
+local usePrecompiledLevels = not playdate.simulator
+
+LDTK.load("levels/world.ldtk", usePrecompiledLevels)
+
+if not usePrecompiledLevels then
+    LDTK.export_to_lua_files()
+end
