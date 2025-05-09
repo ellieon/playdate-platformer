@@ -1,38 +1,37 @@
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
-class("Player").extends(AnimatedSprite)
+class("Player").extends(Actor)
 
 function Player:init(x, y, game_manager)
     self.game_manager = game_manager
 
-    local playerImageTable = gfx.imagetable.new("images/kiwi-test-table-32-32")
+    local playerImageTable = gfx.imagetable.new("images/player-table-96-96.png")
     Player.super.init(self, playerImageTable)
 
     -- Player attributes
+    self.x_acceleration = 450
+    self.max_speed = 130
+    self.x_turn_acceleration = 1300
+    self.x_run_deceleration = 450
 
-    self.x_acceleration = 15
-    self.max_speed = 120
-    self.x_turn_acceleration = 45
-    self.x_run_deceleration = 15
+    self.initial_jump_velocity = -550
+    self.jump_min_time = 0
+    self.jump_max_time = 0.4
 
-    self.jump_velocity = -420
-    self.initial_jump_velocity = -330
-    self.jump_acceleration = -90
-
-    self.gravity = 45
-    self.air_x_friction = 3
+    self.gravity = 900
+    self.air_x_friction = 100
     self.minimum_air_speed = 15
     self.terminal_velocity = 500
     self.coyote_time =  7 * DELTA_TIME -- 7 frames of coyote time
 
-    self.dash_frames = 5 * DELTA_TIME
+    self.dash_frames = 30 * DELTA_TIME
     self.dash_speed = 300
 
-    self.max_jumps = 1
-    self.dash_unlocked = false
-    -- Player state
+    self.max_jumps = 2
+    self.dash_unlocked = true
 
+    -- Player state
     self.x_velocity = 0
     self.y_velocity = 0
     self.times_jumped = 0
@@ -44,11 +43,11 @@ function Player:init(x, y, game_manager)
     self.dead = false
     self.disable_gravity = false
 
-    self:addState("idle", 1, 1)
-    self:addState("run", 1, 4, {tickStep = 5})
-    self:addState("jump", 4, 4)
-    self:addState("fall", 4, 4)
-    self:addState("dash", 4, 4)
+    self:addState("idle", 1, 10,{tickStep = 8})
+    self:addState("run", 11, 18, {tickStep = 8})
+    self:addState("jump", 21, 26, {tickStep = 8})
+    self:addState("fall", 26, 26, {tickStep = 8})
+    self:addState("dash", 31, 35)
     self:addState("freeze", 4, 4)
     self.currentState = 'idle'
 
@@ -56,7 +55,7 @@ function Player:init(x, y, game_manager)
     self:moveTo(x,y)
     self:setZIndex(Z_INDEXES.Player)
     self:setTag(TAGS.Player)
-    self:setCollideRect(8, 11, 16, 21)
+    self:setCollideRect(38, 42, 17, 49)
 
     self.sm = StateMachine()
 
@@ -66,6 +65,7 @@ function Player:init(x, y, game_manager)
     self.sm:add_state(DashState(self), 'dash')
     self.sm:add_state(FallState(self), 'fall')
     self.sm:add_state(FreezeState(self), 'freeze')
+
 
     self.sm:set_initial_state('jump')
 
@@ -85,17 +85,11 @@ end
 
 function Player:update()
     Player.super.update(self)
-    
-    self.input_handler:update()
     self.sm:update(DELTA_TIME)
     self:handleMovementAndCollisions()
     self.sm:after_move()
-    --self.currentState = self.sm.active_state
     self:changeState(self.sm.active_state)
-    --self:updateAnimation()
-
 end
-
 
 function Player:handleMovementAndCollisions()
     self:apply_gravity()
@@ -146,16 +140,6 @@ function Player:handleMovementAndCollisions()
          self.globalFlip = 0
      end
  
-    --  if self.x < 0 then
-    --      self.game_manager:enterRoom("west")
-    --  elseif self.x > 400 then
-    --      self.game_manager:enterRoom("east")
-    --  elseif self.y < 0 then
-    --      self.game_manager:enterRoom("north")
-    --  elseif self.y > 240 then
-    --      self.game_manager:enterRoom("south")
-    --  end
- 
      if died then
          self:freeze()
          pd.timer.performAfterDelay(200, function()
@@ -180,7 +164,7 @@ function Player:handleMovementAndCollisions()
         return
     end
 
-    self.y_velocity += self.gravity
+    self.y_velocity += self.gravity * DELTA_TIME
 
     if(self.y_velocity > self.terminal_velocity) then
         self.y_velocity = self.terminal_velocity

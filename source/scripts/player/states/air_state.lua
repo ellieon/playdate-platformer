@@ -22,14 +22,14 @@ function AirState:update(delta_time)
     local x_acceleration = self.player.x_acceleration
 
     if self.player.globalFlip ~= self.last_flip then
-        x_acceleration *= 4
+       -- x_acceleration *= self.player.x_turn_acceleration
     end
 
-    if math.abs(self.player.x_velocity) <= self.player.max_speed then
+    if math.abs(self.player.x_velocity) <= self.player.max_speed then --Air control
         if self.player.input_handler.x_v > 0 then
-            self.player.x_velocity += x_acceleration
+            self.player.x_velocity += x_acceleration * DELTA_TIME
         elseif self.player.input_handler.x_v < 0 then
-            self.player.x_velocity -= x_acceleration
+            self.player.x_velocity -= x_acceleration * DELTA_TIME
         end
     end
 
@@ -38,20 +38,14 @@ function AirState:update(delta_time)
         return
     end
 
-
-    -- Add drag to slow down player
-    if self.player.x_velocity > 0 then
-        self.player.x_velocity -= self.player.air_x_friction
-    elseif self.player.x_velocity < 0 then
-        self.player.x_velocity += self.player.air_x_friction
-    end
-
-    -- if drag has taken player below minimum speed, clamp them to minimum
-    if self.player.x_velocity ~= 0 and (math.abs(self.player.x_velocity) < self.player.minimum_air_speed) then
-        if self.player.x_velocity < 0 then
-            self.player.x_velocity += self.player.air_x_friction
-        else
-            self.player.x_velocity -= self.player.air_x_friction
+  
+    if self.player.x_velocity ~= 0 then
+        if math.abs(self.player.x_velocity) > self.player.minimum_air_speed and self.player.input_handler.x_v == 0 then
+            self.player.x_velocity -= math.sign(self.player.x_velocity) * self.player.air_x_friction * DELTA_TIME
+        end
+            
+        if (math.abs(self.player.x_velocity) < self.player.minimum_air_speed) then   -- if drag has taken player below minimum speed, clamp them to minimum
+            self.player.x_velocity = math.sign (self.player.x_velocity) * self.player.minimum_air_speed
         end
     end
 end

@@ -10,17 +10,22 @@ import "scripts/libraries/LDtk"
 import "scripts/libraries/timeline"
 
 -- Game files
-import "scripts/game_scene"
-
---util
-import "scripts/util/math"
-import "scripts/util/event_handler"
-import "scripts/util/table"
-
 import "scripts/actor"
 import "scripts/spike"
 import "scripts/spikeball"
 import "scripts/ability"
+
+    --scenes
+    import "scripts/scenes/scene"
+    import "scripts/scenes/game_scene"
+    import "scripts/scenes/map_scene"
+    import "scripts/scenes/scene_manager"
+    import "scripts/scenes/menu_scene"
+    
+    --util
+    import "scripts/util/math"
+    import "scripts/util/event_handler"
+    import "scripts/util/table"
     --Ui
     import "scripts/ui/item_pickup_dialog.lua"
     import "scripts/ui/level_transition_fade.lua"
@@ -54,7 +59,22 @@ Z_INDEXES = {
     Player = 100,
     Hazard = 200,
     Pickup = 50,
-    UI = 10000
+    UI = 10000,
+    Transition_Effect = 20000
 }
 
+playdate.display.setRefreshRate(50)
 DELTA_TIME = 1.0 / playdate.display.getRefreshRate()
+SCREEN_WIDTH = playdate.display.getWidth()
+SCREEN_HEIGHT = playdate.display.getHeight()
+SCENE_MANAGER = SceneManager()
+
+LDTK = LDtk
+
+local usePrecompiledLevels = not playdate.simulator
+
+LDTK.load("levels/world.ldtk", usePrecompiledLevels)
+
+if not usePrecompiledLevels then
+    LDTK.export_to_lua_files()
+end

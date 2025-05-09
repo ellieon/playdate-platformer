@@ -14,7 +14,7 @@ function math.linearScaleBetween(_x,_a,_b,_xMin,_xMax)
   return (((_b-_a)*(_x-_xMin))/(_xMax-_xMin))+_a
 end
 
-function math.pointInRect(p, r) 
+function math.pointInRect(p, r)
   return p.x >= r.x and 
     p.y >= r.y and 
     p.x <= r.x + r.width and

@@ -1,4 +1,4 @@
 local gfx <const> = playdate.graphics
-class('Actor').extends(gfx.sprite)
+class('Actor').extends(AnimatedSprite)
 
 

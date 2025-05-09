@@ -220,6 +220,10 @@ function LDtk.load( ldtk_file, use_lua_levels )
 	end
 end
 
+function LDtk.get_level_rects()
+	return _level_rects
+end
+
 -- Call this function to save the LDtk level in lua files to improve loading performance
 -- The files will be saved in the aave folder of the game (PlaydateSDK/Disk/Data)
 function LDtk.export_to_lua_files()

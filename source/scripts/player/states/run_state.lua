@@ -17,9 +17,8 @@ function RunState:on_enter()
     end
 end
 
-function RunState:update(delta_time)
-    
-    if RunState.super.update(self, delta_time) then
+function RunState:update()
+    if RunState.super.update(self) then
         return
     end
 
@@ -29,26 +28,13 @@ function RunState:update(delta_time)
         x_acceleration = self.player.x_turn_acceleration
     end
 
-    if self.player.input_handler.x_v > 0 and math.abs(self.player.x_velocity) < self.player.max_speed then -- We want to maintain dash momentum
-        self.player.x_velocity += x_acceleration
-        if self.player.x_velocity > self.player.max_speed then
-            self.player.x_velocity = self.player.max_speed
-        end
-    elseif self.player.input_handler.x_v < 0 and math.abs(self.player.x_velocity) < self.player.max_speed then -- We want to maintain dash momentum
-        self.player.x_velocity -= x_acceleration
-        if math.abs(self.player.x_velocity) > self.player.max_speed then
-            self.player.x_velocity = -(self.player.max_speed)
-        end
-    elseif math.abs(self.player.x_velocity) > self.player.x_run_deceleration then
-        if self.player.x_velocity > 0 then
-            self.player.x_velocity -= self.player.x_run_deceleration
-        elseif self.player.x_velocity < 0 then
-            self.player.x_velocity += self.player.x_run_deceleration
-        end
+    if math.abs(self.player.input_handler.x_v) > 0 and math.abs(self.player.x_velocity) < self.player.max_speed then
+        self.player.x_velocity += math.sign(self.player.input_handler.x_v) * x_acceleration * DELTA_TIME
+    elseif math.abs(self.player.x_velocity) > self.player.x_run_deceleration * DELTA_TIME then -- Apply friction
+        self.player.x_velocity -= math.sign(self.player.x_velocity) * self.player.x_run_deceleration * DELTA_TIME
     else
         self.sm:idle()
     end
-
     self.last_flip = self.player.globalFlip
 end
 

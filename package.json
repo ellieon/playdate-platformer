@@ -12,7 +12,8 @@
 	},
 	"playdate": {
 		"pdxinfo": {
-			"name": "Sample Game"
+			"name": "Kiwi Quest",
+			"imagePath": "images/os/card.png"
 		}
 	},
 	"dependencies": {

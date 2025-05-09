@@ -1,4 +1,4 @@
-# It's a Platformer Game Innit
+# Kiwi Quest
 ## Prerequisites
 
 Make sure the [PlaydateSDK](https://play.date/dev/) is fully installed and the `PLAYDATE_SDK_PATH` environment variable is set to the root of your PlaydateSDK directory and the Playdate SDK `bin` folder is on your path
@@ -49,3 +49,4 @@ You can now preview the game in the Playdate Simulator with `npm run simulate`.
 - [LDtK importer](https://github.com/NicMagnier/PlaydateLDtkImporter)
 - [AnimatedSprite](https://github.com/Whitebrim/AnimatedSprite)
 - [Timeline](https://github.com/mierau/playdate-timeline)
+- [ZeggyGames 2D Pixel Art Character Template](https://zegley.itch.io/2d-platformermetroidvania-asset-pack)

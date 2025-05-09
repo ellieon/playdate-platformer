@@ -1,52 +1,47 @@
 local gfx <const> = playdate.graphics
-local ldtk <const> = LDtk
-
-local usePrecompiledLevels = not playdate.simulator
-
-ldtk.load("levels/world.ldtk", usePrecompiledLevels)
 
 class("GameScene").extends()
-local font = gfx.font.new('fonts/font-pixieval')
 
 function GameScene:init()
     self.event_handler = EventHandler()
     self.event_handler:subscribe('ability_picked_up', self, self.player_ability_pickup)
     self.camera = PlayerCamera()
-    self:goToLevel("Level_0")
+    self:goToLevel("Level_0", true)
     self.player = Player(self.spawn_x, self.spawn_y + 16, self)
     self.camera.x = self.spawn_x
     self.camera.y = self.spawn_y
     self.moving = false
-    -- self.camera:add_scroll_event('0', self.camera.x, self.camera.y, self.camera.x, self.camera.y, 1)
+end
 
-    -- self.camera:add_scroll_event('1', self.camera.x, self.camera.y, 1250, self.camera.y, 1)
-    -- self.camera:add_scroll_event('2', 1250, self.camera.y, 1250, 392, 1)
-    -- self.camera:add_scroll_event('3', 1250, 392, 465, 392, 2)
-    -- self.camera:add_scroll_event('4', 465, 392, 465, 570, .75)
-    -- self.camera:add_scroll_event('5', 465, 570, 110, 570, 1)
-    -- self.camera:add_scroll_event('6', 110, 570, 110, 570, 2)
+function GameScene:on_focus()
+    self.mapMenuItem = playdate.getSystemMenu():addMenuItem('Map',  function ()
+        SCENE_MANAGER:push_scene(MapScene)
+    end)
 
+    if not self.mainMenuItem then
+        self.mainMenuItem = playdate.getSystemMenu():addMenuItem('Menu', function ()
+            playdate.getSystemMenu():removeAllMenuItems()
+            SCENE_MANAGER:switch_scene(MenuScene)
+        end)
+    end
+end
 
-    -- self.camera:add_scroll_event('7', 465, 570, self.player.x, self.player.y, 0.5, function () self.player:unfreeze() end, self)
-
-
-    -- self.player:freeze()
-    -- self.camera:play_scroll_events()
-
+function GameScene:on_lose_focus()
+    playdate.getSystemMenu():removeMenuItem(self.mapMenuItem)
 end
 
 function GameScene:update()
-    gfx.setFont(font)
     self.camera:update()
 
     self.camera.target_x = self.player.x
-    self.camera.target_y = self.player.y
+    self.camera.target_y = self.player.y + 40
     
     self.player_world_point = {x= self.player.x + self.level_rect.x, y = self.player.y + self.level_rect.y}
 
     if not math.pointInRect(self.player_world_point, self.level_rect) then
         self:move_room()
     end
+
 end
 
 function GameScene:move_room()
@@ -65,14 +60,14 @@ function GameScene:move_room()
         direction = 'west'
     end
 
-    local neighbours = ldtk.get_neighbours(self.level_name, direction)
+    local neighbours = LDTK.get_neighbours(self.level_name, direction)
     if not neighbours then
         return
     end
 
     for i=1, #neighbours, 1 do
         local name = neighbours[i]
-        local rect = ldtk.get_rect(name)
+        local rect = LDTK.get_rect(name)
         
         if math.pointInRect(self.player_world_point, rect) then
             self.moving = true
@@ -83,7 +78,7 @@ function GameScene:move_room()
 
                 self.spawn_x, self.spawn_y = self:convert_world_point_to_local(self.player_world_point, rect)
                 self.camera:set_position(self.spawn_x, self.spawn_y)
-                self:goToLevel(name)
+                self:goToLevel(name, true)
                 self.player:add()
                 self.player:moveTo(self.spawn_x, self.spawn_y)
                 self.player:unfreeze()
@@ -92,8 +87,6 @@ function GameScene:move_room()
                     fade:remove() 
                     self.moving = false
                 end, {self, fade})
-
-                
             end, {self, rect, name, fade})
         end
     end
@@ -112,24 +105,25 @@ function GameScene:getPlayer()
     return self.player
 end
 
-function GameScene:goToLevel(level_name)
+function GameScene:goToLevel(level_name, spawn_entities)
     gfx.sprite.removeAll()
     self.level_name = level_name
-    self.level_rect = ldtk.get_rect(level_name)
+    self.level_rect = LDTK.get_rect(level_name)
 
     self.camera:set_level_bounds(self.level_rect.width, self.level_rect.height)
 
     self:loadTilemap(level_name)
-    self:loadEntities(level_name)
-
+    if spawn_entities then
+        self:loadEntities(level_name)
+    end
 end
 
 function GameScene:loadTilemap(level_name)
-    local layers = ldtk.get_layers(level_name)
+    local layers = LDTK.get_layers(level_name)
     assert(layers)
     for layer_name, layer in pairs(layers) do
         if layer.tiles then
-            local tilemap = ldtk.create_tilemap(level_name, layer_name)
+            local tilemap = LDTK.create_tilemap(level_name, layer_name)
 
             local layerSprite = gfx.sprite.new()
             assert(tilemap)
@@ -140,7 +134,7 @@ function GameScene:loadTilemap(level_name)
             layerSprite:setUpdatesEnabled(false)
             layerSprite:add()
 
-            local emptyTiles = ldtk.get_empty_tileIDs(level_name, "Solid", layer_name)
+            local emptyTiles = LDTK.get_empty_tileIDs(level_name, "Solid", layer_name)
 
             if emptyTiles then
                 gfx.sprite.addWallSprites(tilemap, emptyTiles)
@@ -150,7 +144,7 @@ function GameScene:loadTilemap(level_name)
 end
 
 function GameScene:loadEntities(level_name)
-    local entities = ldtk.get_entities(level_name)
+    local entities = LDTK.get_entities(level_name)
 
     assert(entities)
     for _, entity in ipairs(entities) do
@@ -178,4 +172,12 @@ function GameScene:player_ability_pickup(event, name)
         self.player:unfreeze()
         self.pickupBox:remove()
     end, {self})
+end
+
+function GameScene:get_scene_name()
+    return "Game"
+end
+
+function GameScene:get_input_handler()
+    return self.player.input_handler
 end

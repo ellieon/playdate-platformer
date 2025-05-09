@@ -10,7 +10,8 @@ function PlayerInputHandler:init(player)
     self.jump_buffer = 0
     self.player = player
     
-    self.player.sm:subscribe('jump', EVENT_TYPE.STATE_ENTER, self.reset_jump_buffer)
+    --Self needs to be passed through on the callback, mechanism to do this doesnt exist
+    --self.player.sm:subscribe('jump', EVENT_TYPE.STATE_ENTER, self.reset_jump_buffer, {self})
 end
 
 function PlayerInputHandler:update()
