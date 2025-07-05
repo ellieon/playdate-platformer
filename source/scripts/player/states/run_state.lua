@@ -10,11 +10,11 @@ function RunState:on_enter()
     RunState.super.on_enter(self)
     self.last_flip = self.player.globalFlip
     
-    if math.abs(self.player.x_acceleration) > self.player.max_speed then
-        if self.player.x_acceleration > 0 then self.player.x_acceleration = self.player.max_speed
-        else  self.player.x_acceleration = -self.player.max_speed
-        end
-    end
+    -- if math.abs(self.player.x_acceleration) > self.player.max_speed * DELTA_TIME then
+    --     if self.player.x_acceleration > 0 then self.player.x_acceleration = self.player.max_speed
+    --     else  self.player.x_acceleration = -self.player.max_speed * DELTA_TIME
+    --     end
+    -- end
 end
 
 function RunState:update()

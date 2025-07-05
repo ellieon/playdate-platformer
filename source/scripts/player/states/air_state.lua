@@ -9,6 +9,11 @@ end
 function AirState:on_enter()
     AirState.super.on_enter(self)
     self.last_flip = self.player.globalFlip
+
+    -- When we come out of a dash into falling we will be going way too fast
+    if math.abs(self.player.x_velocity) > self.player.max_speed then  
+        self.player.x_velocity = math.sign(self.player.x_velocity) * self.player.max_speed
+    end
 end
 
 function AirState:update(delta_time)
@@ -47,6 +52,7 @@ function AirState:update(delta_time)
         if (math.abs(self.player.x_velocity) < self.player.minimum_air_speed) then   -- if drag has taken player below minimum speed, clamp them to minimum
             self.player.x_velocity = math.sign (self.player.x_velocity) * self.player.minimum_air_speed
         end
+        
     end
 end
 

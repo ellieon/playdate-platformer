@@ -8,6 +8,7 @@ if not playdate.simulator then
     SCENE_MANAGER.scenes = {menu_scene}
 else
     local game_scene = GameScene()
+    --local game_scene = MenuScene()
     SCENE_MANAGER.scenes = {game_scene}
     game_scene:on_focus()
 end

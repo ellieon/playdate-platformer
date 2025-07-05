@@ -3250,7 +3250,30 @@
 					"seed": 865264,
 					"overrideTilesetUid": null,
 					"gridTiles": [],
-					"entityInstances": []
+					"entityInstances": [
+						{
+							"__identifier": "Ability",
+							"__grid": [1,7],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#B55088",
+							"iid": "2da46c20-3740-11f0-8ec6-23e356586a7d",
+							"width": 24,
+							"height": 24,
+							"defUid": 35,
+							"px": [24,168],
+							"fieldInstances": [
+								{ "__identifier": "ability", "__type": "LocalEnum.Abilities", "__value": "DoubleJump", "__tile": null, "defUid": 37, "realEditorValues": [{
+									"id": "V_String",
+									"params": ["DoubleJump"]
+								}] },
+								{ "__identifier": "pickedUp", "__type": "Bool", "__value": false, "__tile": null, "defUid": 38, "realEditorValues": [] }
+							],
+							"__worldX": -3472,
+							"__worldY": -456
+						}
+					]
 				},
 				{
 					"__identifier": "Walls",

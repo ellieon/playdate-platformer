@@ -14,10 +14,10 @@ function GroundState:update(delta_time)
     end
 
     --Not decided on if dash will be allowed from ground, or if it will be a slide instead
-    -- if self.player.input_handler.dash and self.player.dash_unlocked and self.player.dash_available then
-    --     self.sm:dash()
-    --     return true
-    -- end
+    if self.player.input_handler.dash and self.player.dash_unlocked and self.player.dash_available then
+         self.sm:dash()
+         return true
+    end
 end
 
 function GroundState:after_move()

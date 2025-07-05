@@ -11,7 +11,6 @@ function FallState:on_enter(previous_state)
     if previous_state:isa(GroundState) then
         self.coyote_time = self.player.coyote_time
         self.player.times_jumped = 0
-
     elseif self.player.times_jumped < 1 then
         self.player.times_jumped = 1
     end
@@ -22,7 +21,7 @@ function FallState:update(delta_time)
     if self.coyote_time > 0 then
         self.coyote_time -= delta_time
     end
-
+    
     if self.player.y_velocity < 0 then
         self.player.y_velocity += 50
     end

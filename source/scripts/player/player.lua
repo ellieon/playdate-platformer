@@ -11,8 +11,8 @@ function Player:init(x, y, game_manager)
 
     -- Player attributes
     self.x_acceleration = 450
-    self.max_speed = 130
-    self.x_turn_acceleration = 1300
+    self.max_speed = 150
+    self.x_turn_acceleration = 2000
     self.x_run_deceleration = 450
 
     self.initial_jump_velocity = -550
@@ -25,10 +25,10 @@ function Player:init(x, y, game_manager)
     self.terminal_velocity = 500
     self.coyote_time =  7 * DELTA_TIME -- 7 frames of coyote time
 
-    self.dash_frames = 30 * DELTA_TIME
+    self.dash_frames = 20 * DELTA_TIME
     self.dash_speed = 300
 
-    self.max_jumps = 2
+    self.max_jumps = 1
     self.dash_unlocked = true
 
     -- Player state
